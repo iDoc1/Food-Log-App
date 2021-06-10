@@ -3,9 +3,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Creates a Connection object specifically for the food_log_database
- * and provides a method that other classes can use to connect to and
- * modify that database
+ * Creates a Connection object specifically to the food_log_database
+ * and provides a get method that returns the current connection that
+ * can be used to connect to and modify the database
+ *
+ * @author iDoc1
+ *
  */
 public class FoodLogConnection {
 
@@ -27,8 +30,8 @@ public class FoodLogConnection {
     }
 
     /**
-     * Returns the current connection to food_log_database
-     * @return  A Connection object to the food_log_database
+     * Returns the current connection to the food log database
+     * @return  A Connection object to food_log_database
      */
     public Connection getFoodLogConnection() {
         return this.connection;

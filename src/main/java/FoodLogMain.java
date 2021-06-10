@@ -36,11 +36,9 @@ public class FoodLogMain {
         System.out.println("2: Add food details");
         System.out.println("3: View food log data");
 
-        // Create Scanner object to receive user input
-        Scanner input = new Scanner(System.in);
-
         // Validate user input
         System.out.print("Enter option: ");
+        Scanner input = new Scanner(System.in);
         String userOption = input.next();
 
         while (!userOption.equals("1") && !userOption.equals("2") && !userOption.equals("3")) {
@@ -48,7 +46,8 @@ public class FoodLogMain {
             userOption = input.next();
         }
 
-        // Continue forward based on user's chosen option
+        // Proceed forward based on user's chosen option
+        System.out.println();
         if (userOption.equals("1")) {
             modifyFoodLog();
         } else if (userOption.equals("2")) {
@@ -64,7 +63,56 @@ public class FoodLogMain {
      * whether to add, delete, or edit a food log entry
      */
     public static void modifyFoodLog() {
+
+        // Establish connection to the food log database
         FoodLogConnection foodLogConn = new FoodLogConnection();
+
+        // Create an object that provides methods to modify the food log
+        FoodLogEntry foodLogEntry = new FoodLogEntry(foodLogConn);
+
+        // Present options to user for how to proceed
+        System.out.println("Please choose from the following options to modify the food log:");
+        System.out.println("1: Add one or more entries");
+        System.out.println("2: Delete one or more entries");
+        System.out.println("3: Edit a specific entry");
+
+        // Validate user input
+        System.out.print("Enter option: ");
+        Scanner input = new Scanner(System.in);
+        String userOption = input.next();
+
+        while (!userOption.equals("1") && !userOption.equals("2") && !userOption.equals("3")) {
+            System.out.print("Invalid choice. Please enter a valid option: ");
+            userOption = input.next();
+        }
+
+        // Proceed forward based on user input and pass the database connection
+        if (userOption.equals("1")) {
+            addEntry(foodLogEntry);
+        } else if (userOption.equals("2")) {
+            deleteEntry(foodLogEntry);
+        } else {
+            editEntry(foodLogEntry);
+        }
+    }
+
+    /**
+     * Accepts a FoodLogEntry object and uses this object's methods to add an entry
+     * to the food_log table
+     *
+     * @param foodLogEntry  Provides a method to add an entry to the food_log table
+     */
+    public static void addEntry(FoodLogEntry foodLogEntry) {
+
+        // Validate that mealType is breakfast, lunch, dinner, brunch, or snack
+    }
+
+    public static void deleteEntry(FoodLogEntry foodLogEntry) {
+
+    }
+
+    public static void editEntry(FoodLogEntry foodLogEntry) {
+
     }
 
     public static void addFoodDetails() {
