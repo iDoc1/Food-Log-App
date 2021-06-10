@@ -13,7 +13,6 @@ public class Food {
 
     /**
      * Constructs a Food object with food name, meal type and serving quantity
-     *
      * @param foodName          name of the food
      * @param mealType          meal type can be breakfast, lunch, dinner, brunch, or snack
      * @param servingQuantity   decimal value for number of servings of this food eaten

@@ -100,16 +100,28 @@ public class FoodLogMain {
      * @param foodLogConn  Provides a method to add an entry to the food_log table
      */
     public static void addEntry(FoodLogConnection foodLogConn) {
-        String foodName = "Apple";
+        // Get entry details from user
+        String foodName = "Pear";
         String mealType = "snack";
-        double servingQuantity = 2;
+        double servingQuantity = 0.5;
+        String notes = "Tasty fruit snack";
 
-        // Create food object for entry to add to database
+        // Create Food and FoodLogEntry objects for entry to add to database
         Food foodEaten = new Food(foodName, mealType, servingQuantity);
+        FoodLogEntry foodLogEntry = new FoodLogEntry(foodLogConn, notes, foodEaten);
 
-        // Check if foodLogEntry.insertRow returns true or false
-        // Get date of entry as today's date or past date
+        // Check if current date or past date
+
         // Validate that mealType is breakfast, lunch, dinner, brunch, or snack
+
+        // Add entry to database and check if it was successful
+        boolean success = foodLogEntry.insertRow();
+        if (success) {
+            System.out.println("Entry successfully added.");
+        } else {
+            System.out.println("Entry insertion failed.");
+        }
+
     }
 
     public static void deleteEntry(FoodLogConnection foodLogConn) {
