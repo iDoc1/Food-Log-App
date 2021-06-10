@@ -67,9 +67,6 @@ public class FoodLogMain {
         // Establish connection to the food log database
         FoodLogConnection foodLogConn = new FoodLogConnection();
 
-        // Create an object that provides methods to modify the food log
-        FoodLogEntry foodLogEntry = new FoodLogEntry(foodLogConn);
-
         // Present options to user for how to proceed
         System.out.println("Please choose from the following options to modify the food log:");
         System.out.println("1: Add one or more entries");
@@ -88,30 +85,38 @@ public class FoodLogMain {
 
         // Proceed forward based on user input and pass the database connection
         if (userOption.equals("1")) {
-            addEntry(foodLogEntry);
+            addEntry(foodLogConn);
         } else if (userOption.equals("2")) {
-            deleteEntry(foodLogEntry);
+            deleteEntry(foodLogConn);
         } else {
-            editEntry(foodLogEntry);
+            editEntry(foodLogConn);
         }
     }
 
     /**
-     * Accepts a FoodLogEntry object and uses this object's methods to add an entry
-     * to the food_log table
+     * Accepts a FoodLogConnection object and uses this connection to create
+     * a FoodLogEntry object used to add an entry to the food_log
      *
-     * @param foodLogEntry  Provides a method to add an entry to the food_log table
+     * @param foodLogConn  Provides a method to add an entry to the food_log table
      */
-    public static void addEntry(FoodLogEntry foodLogEntry) {
+    public static void addEntry(FoodLogConnection foodLogConn) {
+        String foodName = "Apple";
+        String mealType = "snack";
+        double servingQuantity = 2;
 
+        // Create food object for entry to add to database
+        Food foodEaten = new Food(foodName, mealType, servingQuantity);
+
+        // Check if foodLogEntry.insertRow returns true or false
+        // Get date of entry as today's date or past date
         // Validate that mealType is breakfast, lunch, dinner, brunch, or snack
     }
 
-    public static void deleteEntry(FoodLogEntry foodLogEntry) {
+    public static void deleteEntry(FoodLogConnection foodLogConn) {
 
     }
 
-    public static void editEntry(FoodLogEntry foodLogEntry) {
+    public static void editEntry(FoodLogConnection foodLogConn) {
 
     }
 
