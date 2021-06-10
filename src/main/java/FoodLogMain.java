@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Provides a console interface by which the user can enter information
@@ -10,6 +10,11 @@ import java.util.Scanner;
  *
  */
 public class FoodLogMain {
+
+    // Types of meals recognized by this program stored as a Set
+    public static final Set<String> mealTypes
+            = new HashSet<String>(Arrays.asList("breakfast", "lunch", "dinner", "brunch", "snack"));
+
 
     public static void main(String[] args) {
         introduction();
@@ -84,6 +89,7 @@ public class FoodLogMain {
         }
 
         // Proceed forward based on user input and pass the database connection
+        System.out.println();
         if (userOption.equals("1")) {
             addEntry(foodLogConn);
         } else if (userOption.equals("2")) {
@@ -96,25 +102,62 @@ public class FoodLogMain {
     /**
      * Accepts a FoodLogConnection object and uses this connection to create
      * a FoodLogEntry object used to add an entry to the food_log
-     *
      * @param foodLogConn  Provides a method to add an entry to the food_log table
      */
     public static void addEntry(FoodLogConnection foodLogConn) {
+
         // Get entry details from user
-        String foodName = "Pear";
-        String mealType = "snack";
-        double servingQuantity = 0.5;
-        String notes = "Tasty fruit snack";
+        Scanner input = new Scanner(System.in);
 
-        // Create Food and FoodLogEntry objects for entry to add to database
+        System.out.println("Please enter the following details to add an entry.");
+        System.out.println("Leave date blank if entry is for today's date.");
+        System.out.print("Entry date (yyyy-MM-dd): ");
+        String entryDate = input.nextLine();
+
+        System.out.print("Food name: ");
+        String foodName = input.nextLine().toLowerCase();
+
+        // Validate that meal type is breakfast, lunch, dinner, brunch, or snack
+        System.out.print("Meal type: ");
+        String mealType = input.nextLine().toLowerCase();
+
+        while (!mealTypes.contains(mealType)) {
+            System.out.println("Meal type must be breakfast, lunch, dinner, brunch, or snack.");
+            System.out.print("Re-renter meal type: ");
+            mealType = input.nextLine().toLowerCase();
+        }
+
+        // Get serving quantity and check that value entered is valid
+        System.out.print("Serving quantity: ");
+        double servingQuantity = 0;  // Initialize serving quantity to zero
+
+        // Prompt user for valid number until no exception thrown
+        while (true) {
+            try {
+                String servingInput = input.nextLine();
+                servingQuantity = Double.parseDouble(servingInput);  // String to double conversion
+                break;  // break if no exception thrown
+            } catch (NumberFormatException e) {
+                System.out.println("Serving quantity must be a number.");
+                System.out.print("Re-enter serving quantity: ");
+            }
+        }
+
+        System.out.print("Entry notes: ");
+        String notes = input.nextLine();
+
+        // Create Food and FoodLogEntry objects
         Food foodEaten = new Food(foodName, mealType, servingQuantity);
-        FoodLogEntry foodLogEntry = new FoodLogEntry(foodLogConn, notes, foodEaten);
+        FoodLogEntry foodLogEntry = null;
 
-        // Check if current date or past date
+        // Create entry object depending on if user entered an entry date or not
+        if (entryDate.equals("")) {
+            foodLogEntry = new FoodLogEntry(foodLogConn, notes, foodEaten);
+        } else {
+            foodLogEntry = new FoodLogEntry(foodLogConn, entryDate, notes, foodEaten);
+        }
 
-        // Validate that mealType is breakfast, lunch, dinner, brunch, or snack
-
-        // Add entry to database and check if it was successful
+        // Add entry to database and check if insertion was successful
         boolean success = foodLogEntry.insertRow();
         if (success) {
             System.out.println("Entry successfully added.");
