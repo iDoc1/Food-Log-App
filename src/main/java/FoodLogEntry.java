@@ -15,8 +15,6 @@ import java.util.Date;
 
 public class FoodLogEntry {
 
-    private final String foodLogTable = "food_log";  // Name of the table to be modified
-
     private Connection connection;  // Existing connection to food_log_database
     private String entryDate;  // Desired date of entry
     private String entryNotes;  // Notes associated with an entry
@@ -24,9 +22,9 @@ public class FoodLogEntry {
 
     /**
      * Creates a FoodLogEntry object using all of the available private data members
-     * @param foodLogConn   current connection to food_log_database
-     * @param entryDate     date of the desired food log entry
-     * @param notes         any entry notes the user would like to add
+     * @param foodLogConn   Current connection to food_log_database
+     * @param entryDate     Date of the desired food log entry
+     * @param notes         Any entry notes the user would like to add
      * @param foodEaten     Food object containing food name, meal type and serving quantity
      */
     public FoodLogEntry(FoodLogConnection foodLogConn, String entryDate, String notes, Food foodEaten) {
@@ -39,8 +37,8 @@ public class FoodLogEntry {
     /**
      * Creates a FoodLogEntry object with today's date as the entryDate data member. Overloads
      * the original constructor.
-     * @param foodLogConn   current connection to food_log_database
-     * @param notes         any entry notes the user would like to add
+     * @param foodLogConn   Current connection to food_log_database
+     * @param notes         Any entry notes the user would like to add
      * @param foodEaten     Food object containing food name, meal type and serving quantity
      */
     public FoodLogEntry(FoodLogConnection foodLogConn, String notes, Food foodEaten) {
@@ -53,7 +51,7 @@ public class FoodLogEntry {
 
     /**
      * Uses this object's private fields to insert a row into the food_log table
-     * @return                  returns true if insertion was successful, false if not
+     * @return  Returns true if insertion was successful, false if not
      */
     public boolean insertRow() {
         String sqlString = "INSERT INTO food_log_database.food_log (entry_date, food_name, meal_type" +

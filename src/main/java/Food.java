@@ -13,9 +13,9 @@ public class Food {
 
     /**
      * Constructs a Food object with food name, meal type and serving quantity
-     * @param foodName          name of the food
-     * @param mealType          meal type can be breakfast, lunch, dinner, brunch, or snack
-     * @param servingQuantity   decimal value for number of servings of this food eaten
+     * @param foodName          Name of the food
+     * @param mealType          Meal type can be breakfast, lunch, dinner, brunch, or snack
+     * @param servingQuantity   Decimal value for number of servings of this food eaten
      */
     public Food(String foodName, String mealType, double servingQuantity) {
         this.foodName = foodName;
@@ -33,7 +33,7 @@ public class Food {
 
     /**
      * Returns the meal type associated with this food
-     * @return
+     * @return  The meal type associated with this object
      */
     public String getMealType() {
         return this.mealType;
@@ -41,7 +41,7 @@ public class Food {
 
     /**
      * Returns the serving quantity associated with this food and meal
-     * @return
+     * @return  The serving quantity value
      */
     public double getServingQuantity() {
         return this.servingQuantity;
