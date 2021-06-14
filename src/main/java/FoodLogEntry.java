@@ -18,16 +18,16 @@ public class FoodLogEntry {
     private Connection connection;  // Existing connection to food_log_database
     private String entryDate;  // Desired date of entry
     private String entryNotes;  // Notes associated with an entry
-    private Food foodEaten;  // Food object to add to food log
+    private FoodDetails foodEaten;  // FoodDetails object to add to food log
 
     /**
      * Creates a FoodLogEntry object using all of the available private data members
      * @param foodLogConn   Current connection to food_log_database
      * @param entryDate     Date of the desired food log entry
      * @param notes         Any entry notes the user would like to add
-     * @param foodEaten     Food object containing food name, meal type and serving quantity
+     * @param foodEaten     FoodDetails object containing food name, meal type and serving quantity
      */
-    public FoodLogEntry(FoodLogConnection foodLogConn, String entryDate, String notes, Food foodEaten) {
+    public FoodLogEntry(FoodLogConnection foodLogConn, String entryDate, String notes, FoodDetails foodEaten) {
         this.connection = foodLogConn.getFoodLogConnection();
         this.entryDate = entryDate;
         this.entryNotes = notes;
@@ -39,9 +39,9 @@ public class FoodLogEntry {
      * the original constructor.
      * @param foodLogConn   Current connection to food_log_database
      * @param notes         Any entry notes the user would like to add
-     * @param foodEaten     Food object containing food name, meal type and serving quantity
+     * @param foodEaten     FoodDetails object containing food name, meal type and serving quantity
      */
-    public FoodLogEntry(FoodLogConnection foodLogConn, String notes, Food foodEaten) {
+    public FoodLogEntry(FoodLogConnection foodLogConn, String notes, FoodDetails foodEaten) {
         this(foodLogConn, "", notes, foodEaten);
 
         // Set entryDate data member to today's date in yyyy-MM-dd format
