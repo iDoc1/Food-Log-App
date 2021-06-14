@@ -53,27 +53,25 @@ public class FoodLogMain {
 
         // Establish connection to the food log database to be passed as an argument
         FoodLogConnection foodLogConn = new FoodLogConnection();
+        FoodLogComm foodLogComm = new FoodLogComm(foodLogConn);
 
         // Proceed forward based on user's chosen option
         System.out.println();
         if (userOption.equals("1")) {
-            modifyFoodLog(foodLogConn);
+            modifyFoodLog(foodLogComm);
         } else if (userOption.equals("2")) {
             addFoodDetails();
         } else {
-            viewData(foodLogConn);
+            viewData(foodLogComm);
         }
     }
 
     /**
      * Creates a connection to the food log database and allows user to choose
      * whether to add, delete, or edit a food log entry
-     * @param foodLogConn   Existing connection to food_log_database
+     * @param foodLogComm   Object used to modify and query the food log database
      */
-    public static void modifyFoodLog(FoodLogConnection foodLogConn) {
-
-        // Establish connection to the food log database
-        //FoodLogConnection foodLogConn = new FoodLogConnection();
+    public static void modifyFoodLog(FoodLogComm foodLogComm) {
 
         // Present options to user for how to proceed
         System.out.println("Please choose from the following options to modify the food log:");
@@ -93,23 +91,23 @@ public class FoodLogMain {
 
         // Proceed forward based on user input and pass the database connection
         if (userOption.equals("1")) {
-            addEntry(foodLogConn);
+            addEntry(foodLogComm);
         } else if (userOption.equals("2")) {
-            deleteEntry(foodLogConn);
+            deleteEntry(foodLogComm);
         } else {
-            editEntry(foodLogConn);
+            editEntry(foodLogComm);
         }
     }
 
     /**
      * Calls the addEntryHelper method to add an entry then checks if user would
      * like to add another entry to the food log
-     * @param foodLogConn   Provides a connection to the food log database
+     * @param foodLogComm   Object used to modify and query the food log database
      */
-    public static void addEntry(FoodLogConnection foodLogConn) {
+    public static void addEntry(FoodLogComm foodLogComm) {
 
         // Add an entry to the table
-        addEntryHelper(foodLogConn);
+        addEntryHelper(foodLogComm);
 
         // Check if user wants to add another entry
         boolean addAnother = true;
@@ -125,7 +123,7 @@ public class FoodLogMain {
 
             // Add another entry if user answers 'y'
             if (answer.equalsIgnoreCase("y")) {
-                addEntryHelper(foodLogConn);
+                addEntryHelper(foodLogComm);
             } else {
                 addAnother = false;
             }
@@ -135,9 +133,9 @@ public class FoodLogMain {
     /**
      * Accepts a FoodLogConnection object and uses this connection to create
      * Food and FoodLogEntry objects to add an entry to the food log
-     * @param foodLogConn  Provides a connection to the food log database
+     * @param foodLogComm  Object used to modify and query the food log database
      */
-    private static void addEntryHelper(FoodLogConnection foodLogConn) {
+    private static void addEntryHelper(FoodLogComm foodLogComm) {
 
         // Get entry details from user
         Scanner input = new Scanner(System.in);
@@ -180,19 +178,18 @@ public class FoodLogMain {
         System.out.print("Entry notes: ");
         String notes = input.nextLine();
 
-        // Create FoodDetails and FoodLogEntry objects
+        // Create FoodDetails and FoodLogComm objects
         FoodDetails foodEaten = new FoodDetails(foodName, mealType, servingQuantity);
-        FoodLogEntry foodLogEntry;
 
         // Create entry object depending on if user entered an entry date or not
+        boolean success;
         if (entryDate.equals("")) {
-            foodLogEntry = new FoodLogEntry(foodLogConn, notes, foodEaten);
+            success = foodLogComm.insertRowCurrDate(foodEaten, notes);
         } else {
-            foodLogEntry = new FoodLogEntry(foodLogConn, entryDate, notes, foodEaten);
+            success = foodLogComm.insertRowGivenDate(foodEaten, entryDate, notes);
         }
 
         // Add entry to database and check if insertion was successful
-        boolean success = foodLogEntry.insertRow();
         if (success) {
             System.out.println("Entry successfully added.");
         } else {
@@ -200,11 +197,11 @@ public class FoodLogMain {
         }
     }
 
-    public static void deleteEntry(FoodLogConnection foodLogConn) {
+    public static void deleteEntry(FoodLogComm foodLogComm) {
 
     }
 
-    public static void editEntry(FoodLogConnection foodLogConn) {
+    public static void editEntry(FoodLogComm foodLogComm) {
 
     }
 
@@ -216,12 +213,12 @@ public class FoodLogMain {
      * Asks user for details regarding what data they want to view, then fetches
      * the data from the food log database using the FetchData class. A
      * DataReport object is then created and used to print the results.
-     * @param foodLogConn
+     * @param foodLogComm
      */
-    public static void viewData(FoodLogConnection foodLogConn) {
+    public static void viewData(FoodLogComm foodLogComm) {
 
-        FetchData fetchData = new FetchData(foodLogConn);
-        fetchData.fetchDataFromID(9);
+        //FetchData fetchData = new FetchData(foodLogConn);
+        //fetchData.fetchDataFromID(9);
 
     }
 }
