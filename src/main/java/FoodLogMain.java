@@ -216,9 +216,8 @@ public class FoodLogMain {
      * @param foodLogComm
      */
     public static void viewData(FoodLogComm foodLogComm) {
-
-        //FetchData fetchData = new FetchData(foodLogConn);
-        //fetchData.fetchDataFromID(9);
+        DataReport report = new DataReport(foodLogComm.fetchDataFromID(10));
+        report.printAllResults();
 
     }
 }
