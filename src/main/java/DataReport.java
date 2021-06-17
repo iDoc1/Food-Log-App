@@ -24,43 +24,80 @@ public class DataReport {
     }
 
     /**
-     * Prints all of the results in a table format
+     * Prints all of the results in a table format separated by spaces to
+     * keep columns aligned. Spaces are used instead of tabs to ensure
+     * columns remain aligned if users have different tab sizes settings.
      */
     public void printAllResults() {
 
-        // Print column headers
-        System.out.print("Entry ID" + "\t\t");
-        System.out.print("Entry Date" + "\t\t");
-        System.out.print("Food Name" + "\t\t");
-        System.out.print("Meal Type" + "\t\t");
-        System.out.print("Serving Quantity" + "\t\t");
-        System.out.println("Entry Notes" + "\t\t");
+        // Print column headers with spaces for column alignment
+        System.out.print("Entry ID" + "                        ");
+        System.out.print("Entry Date" + "                      ");
+        System.out.print("Food Name" + "                       ");
+        System.out.print("Meal Type" + "                       ");
+        System.out.print("Serving Quantity" + "                ");
+        System.out.println("Entry Notes");
 
         // Print results and handle exception
         try {
 
-            // Loop through results set and add the proper number of tabs for column spacing
+            // Loop through results set and add the proper number of spaces
             while (results.next()) {
-                System.out.print(results.getInt("entry_id") + "\t\t");
-                System.out.print(results.getString("entry_date") + "\t\t");
-                System.out.print(results.getString("food_name") + "\t\t");
-                System.out.print(results.getString("meal_type") + "\t\t");
-                System.out.print(results.getString("serving_quantity") + "\t\t");
-                System.out.println(results.getString("entry_notes") + "\t\t");
+                Integer entryID = results.getInt("entry_id");
+                System.out.print(entryID);
+                insertSpaces(entryID.toString());
+
+                String entryDate = results.getString("entry_date");
+                System.out.print(entryDate);
+                insertSpaces(entryDate);
+
+                String foodName = results.getString("food_name");
+                System.out.print(foodName);
+                insertSpaces(foodName);
+
+                String mealType = results.getString("meal_type");
+                System.out.print(mealType);
+                insertSpaces(mealType);
+
+                Double servingQty = results.getDouble("serving_quantity");
+                System.out.print(servingQty);
+                insertSpaces(servingQty.toString());
+
+                String entryNotes = results.getString("entry_notes");
+                System.out.println(entryNotes);
             }
         } catch (SQLException e) {
             System.out.println("Results not found.");
         }
+    }
+
+    /**
+     * Inserts the proper number of spaces necessary to keep columns aligned. Number
+     * of spaces is determined using the length of the given String and the standard
+     * column width for displaying each entry, which is defined as 32 characters for
+     * this program.
+     * @param strEntry String to insert spaces after
+     */
+    private void insertSpaces(String strEntry) {
+        int numOfSpaces = 32 - strEntry.length();
+
+        // Print spaces
+        for (int i = 1; i <= numOfSpaces; i++) {
+            System.out.print(" ");
+        }
+    }
+
+    /**
+     * Saves this object's ResultSet in CSV format
+     */
+    public void saveAsCSV() {
 
     }
 
     /**
-     * Inserts the proper number of tabs necessary to keep columns aligned. Number
-     * of tabs is determined using the length of the given String and the maximum
-     * number of characters allowed amoung the first 5 columsn (50 characters)
-     * @param strLength length of the String to insert tabs after
+     * Saves this object's ResultSet in JSON format
      */
-    private void insertTabs(int strLength) {
+    public void saveAsJson() {
 
     }
 

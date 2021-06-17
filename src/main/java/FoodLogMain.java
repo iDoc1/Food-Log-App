@@ -213,10 +213,10 @@ public class FoodLogMain {
      * Asks user for details regarding what data they want to view, then fetches
      * the data from the food log database using the FetchData class. A
      * DataReport object is then created and used to print the results.
-     * @param foodLogComm
+     * @param foodLogComm   Object used to modify and query the food log database
      */
     public static void viewData(FoodLogComm foodLogComm) {
-        DataReport report = new DataReport(foodLogComm.fetchDataFromID(10));
+        DataReport report = new DataReport(foodLogComm.fetchDataFromDateRange("2021-06-09", "2021-06-16"));
         report.printAllResults();
 
     }
