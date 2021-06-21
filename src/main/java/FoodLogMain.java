@@ -219,5 +219,15 @@ public class FoodLogMain {
         DataReport report = new DataReport(foodLogComm.fetchDataFromDateRange("2021-06-09", "2021-06-16"));
         report.printAllResults();
 
+        // Present options to user regarding what data to view
+        System.out.println("Please choose from the following options to view data");
+        System.out.println("1: View entries on a given date");
+        System.out.println("2: View entries within a given date range");
+        System.out.println("3: View entries containing a specific food");
+        System.out.println("4: Food log report for the last week");
+        System.out.println("5: Food log report for the last day");
+
+        // Ask if user would like to export the viewed data
+
     }
 }
