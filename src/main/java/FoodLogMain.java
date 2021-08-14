@@ -25,9 +25,9 @@ public class FoodLogMain {
      * Introduces the user to the Food Log program
      */
     public static void introduction() {
-        System.out.println("Welcome to the Food Log program.");
+        System.out.println("Welcome to the Food Log App.");
         System.out.println("This program allows you to record and view data regarding");
-        System.out.println("the food you eat throughout the day. Please review the");
+        System.out.println("the meals you have eaten during the day. Please review the");
         System.out.println("following options to get started.");
         System.out.println();
     }
@@ -191,9 +191,9 @@ public class FoodLogMain {
 
         // Add entry to database and check if insertion was successful
         if (success) {
-            System.out.println("Entry successfully added.");
+            System.out.println("\nEntry successfully added.");
         } else {
-            System.out.println("Entry insertion failed.");
+            System.out.println("\nError: Entry not added.");
         }
     }
 
