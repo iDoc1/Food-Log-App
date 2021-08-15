@@ -52,6 +52,7 @@ public class FoodLogMain {
         }
 
         // Establish connection to the food log database to be passed as an argument
+        System.out.println("\nConnecting to database...");
         FoodLogConnection foodLogConn = new FoodLogConnection();
         FoodLogComm foodLogComm = new FoodLogComm(foodLogConn);
 
@@ -217,7 +218,7 @@ public class FoodLogMain {
      */
     public static void viewData(FoodLogComm foodLogComm) {
         DataReport report = new DataReport(foodLogComm.fetchDataFromDateRange("2021-06-09", "2021-06-16"));
-        report.printAllResults();
+        report.printResults();
 
         // Present options to user regarding what data to view
         System.out.println("Please choose from the following options to view data");

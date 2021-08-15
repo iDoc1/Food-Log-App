@@ -1,11 +1,11 @@
-import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * This class represents a Data Report where a ResultSet is passed to the
- * constructor and is used to display and manipulate date as defined by
- * a variety of methods.
+ * constructor. The methods in this class can be used to print the given
+ * ResultSet to the console, or export the ResultSet in JSON or CSV format
+ * to be used by another application.
  *
  * @author iDoc1
  *
@@ -28,14 +28,14 @@ public class DataReport {
      * keep columns aligned. Spaces are used instead of tabs to ensure
      * columns remain aligned if users have different tab sizes settings.
      */
-    public void printAllResults() {
+    public void printResults() {
 
         // Print column headers with spaces for column alignment
-        System.out.print("Entry ID" + "                        ");
-        System.out.print("Entry Date" + "                      ");
+        System.out.print("Entry ID" + "        ");
+        System.out.print("Entry Date" + "      ");
         System.out.print("Food Name" + "                       ");
-        System.out.print("Meal Type" + "                       ");
-        System.out.print("Serving Quantity" + "                ");
+        System.out.print("Meal Type" + "       ");
+        System.out.print("Serving Qty" + "     ");
         System.out.println("Entry Notes");
 
         // Print results and handle exception
@@ -45,23 +45,23 @@ public class DataReport {
             while (results.next()) {
                 Integer entryID = results.getInt("entry_id");
                 System.out.print(entryID);
-                insertSpaces(entryID.toString());
+                insertSpaces(entryID.toString(), 16);
 
                 String entryDate = results.getString("entry_date");
                 System.out.print(entryDate);
-                insertSpaces(entryDate);
+                insertSpaces(entryDate, 16);
 
                 String foodName = results.getString("food_name");
                 System.out.print(foodName);
-                insertSpaces(foodName);
+                insertSpaces(foodName, 32);
 
                 String mealType = results.getString("meal_type");
                 System.out.print(mealType);
-                insertSpaces(mealType);
+                insertSpaces(mealType, 16);
 
                 Double servingQty = results.getDouble("serving_quantity");
                 System.out.print(servingQty);
-                insertSpaces(servingQty.toString());
+                insertSpaces(servingQty.toString(), 16);
 
                 String entryNotes = results.getString("entry_notes");
                 System.out.println(entryNotes);
@@ -78,8 +78,8 @@ public class DataReport {
      * this program.
      * @param strEntry String to insert spaces after
      */
-    private void insertSpaces(String strEntry) {
-        int numOfSpaces = 32 - strEntry.length();
+    private void insertSpaces(String strEntry, int colWidth) {
+        int numOfSpaces = colWidth - strEntry.length();
 
         // Print spaces
         for (int i = 1; i <= numOfSpaces; i++) {

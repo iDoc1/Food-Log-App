@@ -118,7 +118,8 @@ public class FoodLogComm {
      * between a start date (inclusive) and and end date (inclusive)
      * @param startDate The start of the date range to search data for (inclusive)
      * @param endDate   The end of the date range to search data for (inclusive)
-     * @return          The ResultSet object for all entries in given date range
+     * @return          The ResultSet object for all entries in given date range, or
+     *                  null if an error is thrown
      */
     public ResultSet fetchDataFromDateRange(String startDate, String endDate) {
         String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
