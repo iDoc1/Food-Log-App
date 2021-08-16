@@ -9,7 +9,7 @@ import java.util.Date;
  * This class takes a connection to the food log database as a parameter
  * then defines a variety of methods by which to manipulate and run
  * queries on this database. This class serves as a communicator to the
- * food log database.
+ * food log database to perform CRUD operations.
  *
  * @author iDoc1
  *
@@ -96,9 +96,10 @@ public class FoodLogComm {
 
     /**
      * Returns a ResultSet of all the entries in the food log that occur
-     * on a given date
+     * on a given date, or null if date String is invalid
      * @param date  The date that the user wants to find food log entries for
-     * @return      The ResultSet object for all entries occurring on given date
+     * @return      The ResultSet object for all entries occurring on given date or
+     *              null if the given date String throws an exception
      */
     public ResultSet fetchDataFromDate(String date) {
         String sqlQuery = "SELECT * FROM food_log_database.food_log a WHERE a.entry_date = ?";
@@ -130,6 +131,27 @@ public class FoodLogComm {
             PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
             statement.setString(1, startDate);
             statement.setString(2, endDate);
+            return statement.executeQuery();  // Return ResultSet object
+        } catch (SQLException e) {
+            return null;  // Return null if an exception is thrown
+        }
+    }
+
+    /**
+     * Returns a ResultSet of all entries in the food log that have a
+     * given food name
+     * @param foodName  Name of the food to get ResultSet for
+     * @return          The ResultSet object for all entries that have the given
+     *                  food name, or null if an error is thrown
+     */
+    public ResultSet fetchDataFromFood(String foodName) {
+        String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
+                "WHERE a.food_name LIKE ?";
+
+        // Execute query and handle exception
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+            statement.setString(1, "%" + foodName + "%");
             return statement.executeQuery();  // Return ResultSet object
         } catch (SQLException e) {
             return null;  // Return null if an exception is thrown

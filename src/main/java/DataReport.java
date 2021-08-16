@@ -30,6 +30,17 @@ public class DataReport {
      */
     public void printResults() {
 
+        // Check if results are empty
+        try {
+            if (!results.isBeforeFirst()) {  // isBeforeFirst returns false if ResultSet is empty
+                System.out.println("No results found.");
+                return;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error occurred while checking if data exists.");
+            return;
+        }
+
         // Print column headers with spaces for column alignment
         System.out.print("Entry ID" + "        ");
         System.out.print("Entry Date" + "      ");
@@ -67,16 +78,18 @@ public class DataReport {
                 System.out.println(entryNotes);
             }
         } catch (SQLException e) {
-            System.out.println("Results not found.");
+            System.out.println("Error occurred while fetching data.");
         }
     }
 
     /**
      * Inserts the proper number of spaces necessary to keep columns aligned. Number
      * of spaces is determined using the length of the given String and the standard
-     * column width for displaying each entry, which is defined as 32 characters for
-     * this program.
+     * given column width parameter. The maximum width of any column in the food log
+     * database is 30 characters (except for the last column), so the maximum column
+     * width given as a parameter should be limited to 32 characters.
      * @param strEntry String to insert spaces after
+     * @param colWidth Desired width of column in number of characters
      */
     private void insertSpaces(String strEntry, int colWidth) {
         int numOfSpaces = colWidth - strEntry.length();

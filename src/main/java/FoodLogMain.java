@@ -1,3 +1,4 @@
+import java.sql.ResultSet;
 import java.util.*;
 
 /**
@@ -217,8 +218,8 @@ public class FoodLogMain {
      * @param foodLogComm   Object used to modify and query the food log database
      */
     public static void viewData(FoodLogComm foodLogComm) {
-        DataReport report = new DataReport(foodLogComm.fetchDataFromDateRange("2021-06-09", "2021-06-16"));
-        report.printResults();
+        //DataReport report = new DataReport(foodLogComm.fetchDataFromDateRange("2021-06-09", "2021-06-16"));
+        //report.printResults();
 
         // Present options to user regarding what data to view
         System.out.println("Please choose from the following options to view data");
@@ -227,6 +228,89 @@ public class FoodLogMain {
         System.out.println("3: View entries containing a specific food");
         System.out.println("4: Food log report for the last week");
         System.out.println("5: Food log report for the last day");
+
+        // Receive user input
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter option: ");
+
+        // Ensure input is an integer
+        int userOption = 0;
+        try {
+            userOption = Integer.parseInt(input.next());
+        } catch (NumberFormatException e) {
+            System.out.println("Input must be numerical.");
+        }
+
+        // Validate user input
+        while (userOption < 1 || userOption > 5) {
+            System.out.print("Option not valid. Please enter a valid option: ");
+
+            // Ensure input is an integer
+            try {
+                userOption = Integer.parseInt(input.next());
+            } catch (NumberFormatException e) {
+                System.out.println("Input must be numerical.");
+            }
+        }
+        System.out.println();
+
+        // Print report given an single date
+        if (userOption == 1) {
+
+            // Get date from user
+            System.out.print("Enter a date (yyyy-MM-dd): ");
+            String userDate = input.next();
+
+            // Ensure given date is valid
+            ResultSet resultSet = foodLogComm.fetchDataFromDate(userDate);
+            while (resultSet == null) {
+                System.out.print("Date is invalid. Please enter a valid date in yyyy-MM-dd format: ");
+                userDate = input.next();
+
+                resultSet = foodLogComm.fetchDataFromDate(userDate);
+            }
+
+            // Create DataReport and print results
+            DataReport report = new DataReport(resultSet);
+            System.out.println();
+            report.printResults();
+
+        // Print report given a date range
+        } else if (userOption == 2) {
+
+            // Get date range from user
+            System.out.print("Enter start date (yyyy-MM-dd): ");
+            String startDate = input.next();
+            System.out.print("Enter end date (yyyy-MM-dd): ");
+            String endDate = input.next();
+
+            // Ensure given dates are valid
+            ResultSet resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
+            while (resultSet == null) {
+                System.out.println("One or both dates are invalid. Please enter valid dates.");
+                System.out.print("Enter start date (yyyy-MM-dd): ");
+                startDate = input.next();
+                System.out.print("Enter end date (yyyy-MM-dd): ");
+                endDate = input.next();
+
+                resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
+            }
+
+            // Create DataReport and print results
+            DataReport report = new DataReport(resultSet);
+            System.out.println();
+            report.printResults();
+        } else if (userOption == 3) {
+
+            // Get food name from user
+            System.out.print("Enter food name: ");
+            String foodName = input.next();
+
+            // Create a DataReport and print results
+            DataReport report = new DataReport(foodLogComm.fetchDataFromFood(foodName));
+            System.out.println();
+            report.printResults();
+        }
 
         // Ask if user would like to export the viewed data
 
