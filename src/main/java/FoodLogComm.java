@@ -158,4 +158,31 @@ public class FoodLogComm {
         }
     }
 
+    /**
+     * Inserts an entry into the calorie table. Duplicate foods are not allowed in
+     * this table as defined by the created table's primary key.
+     * @param foodName      Name of the food
+     * @param calories      Calories per serving in the food
+     * @param foodCategory  Category of the food
+     * @return              true if insertion successful, false otherwise
+     */
+    public boolean insertFoodDetails(String foodName, int calories, String foodCategory) {
+        String sqlString = "INSERT INTO food_log_database.calorie_table" +
+                "(food_name, calories_per_serving, food_category) " +
+                "VALUES(?, ?, ?)";
+
+        // Insert values into table and handle exceptions
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlString);
+            statement.setString(1, foodName);
+            statement.setInt(2, calories);
+            statement.setString(3, foodCategory);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

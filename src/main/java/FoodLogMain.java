@@ -12,9 +12,13 @@ import java.util.*;
  */
 public class FoodLogMain {
 
-    // Types of meals recognized by this program stored as a Set
+    // Types of meals recognized by this app
     public static final Set<String> mealTypes
             = new HashSet<>(Arrays.asList("breakfast", "lunch", "dinner", "brunch", "snack"));
+
+    // Types of food categories recognized by this app
+    public static final Set<String> foodCategories
+            = new HashSet<>(Arrays.asList("fruit", "vegetable", "grain", "dairy", "protein", "other"));
 
 
     public static void main(String[] args) {
@@ -62,7 +66,7 @@ public class FoodLogMain {
         if (userOption.equals("1")) {
             modifyFoodLog(foodLogComm);
         } else if (userOption.equals("2")) {
-            addFoodDetails();
+            addFoodDetails(foodLogComm);
         } else {
             viewData(foodLogComm);
         }
@@ -207,8 +211,53 @@ public class FoodLogMain {
 
     }
 
-    public static void addFoodDetails() {
+    /**
+     * Asks user for calories per serving and food category details regarding a
+     * specific food. This data is stored in a table in teh food log database and
+     * is used while running certain data reports.
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
+    public static void addFoodDetails(FoodLogComm foodLogComm) {
+        System.out.println("Please enter the below information about a specific food.");
+        System.out.println("This information is used when you run a data report so");
+        System.out.println("that you can view data regarding your past meals.");
 
+        // Get user input regarding food details
+        Scanner input = new Scanner(System.in);
+        System.out.print("Food name: ");
+        String foodName = input.nextLine();
+        System.out.print("kCal per serving: ");
+
+        // Ensure calories input is an integer
+        int calories;
+        while (true) {
+            try {
+                String caloriesInput = input.nextLine();
+                calories = Integer.parseInt(caloriesInput);  // String to double conversion
+                break;  // break if no exception thrown
+            } catch (NumberFormatException e) {
+                System.out.println("kCal/serving must be an integer.");
+                System.out.print("Re-enter kCal/serving: ");
+            }
+        }
+
+        // Ensure given food category is valid
+        System.out.print("Closest food category (grain, fruit, vegetable, dairy, protein, other): ");
+        String foodCategory = input.nextLine().toLowerCase();
+
+        while (!foodCategories.contains(foodCategory)) {
+            System.out.println("Food category must be grain, fruit, vegetable, dairy, protein, or other.");
+            System.out.print("Please re-enter food category: ");
+            foodCategory = input.nextLine();
+        }
+
+        // Insert the values into the database
+        boolean success = foodLogComm.insertFoodDetails(foodName, calories, foodCategory);
+        if (success) {
+            System.out.println("\nFood details successfully added.");
+        } else {
+            System.out.println("\nError: food details not added.");
+        }
     }
 
     /**
@@ -236,7 +285,7 @@ public class FoodLogMain {
         // Ensure input is an integer
         int userOption = 0;
         try {
-            userOption = Integer.parseInt(input.next());
+            userOption = Integer.parseInt(input.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Input must be numerical.");
         }
@@ -247,7 +296,7 @@ public class FoodLogMain {
 
             // Ensure input is an integer
             try {
-                userOption = Integer.parseInt(input.next());
+                userOption = Integer.parseInt(input.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Input must be numerical.");
             }
@@ -259,13 +308,13 @@ public class FoodLogMain {
 
             // Get date from user
             System.out.print("Enter a date (yyyy-MM-dd): ");
-            String userDate = input.next();
+            String userDate = input.nextLine();
 
             // Ensure given date is valid
             ResultSet resultSet = foodLogComm.fetchDataFromDate(userDate);
             while (resultSet == null) {
                 System.out.print("Date is invalid. Please enter a valid date in yyyy-MM-dd format: ");
-                userDate = input.next();
+                userDate = input.nextLine();
 
                 resultSet = foodLogComm.fetchDataFromDate(userDate);
             }
@@ -280,18 +329,18 @@ public class FoodLogMain {
 
             // Get date range from user
             System.out.print("Enter start date (yyyy-MM-dd): ");
-            String startDate = input.next();
+            String startDate = input.nextLine();
             System.out.print("Enter end date (yyyy-MM-dd): ");
-            String endDate = input.next();
+            String endDate = input.nextLine();
 
             // Ensure given dates are valid
             ResultSet resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
             while (resultSet == null) {
                 System.out.println("One or both dates are invalid. Please enter valid dates.");
                 System.out.print("Enter start date (yyyy-MM-dd): ");
-                startDate = input.next();
+                startDate = input.nextLine();
                 System.out.print("Enter end date (yyyy-MM-dd): ");
-                endDate = input.next();
+                endDate = input.nextLine();
 
                 resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
             }
@@ -304,7 +353,7 @@ public class FoodLogMain {
 
             // Get food name from user
             System.out.print("Enter food name: ");
-            String foodName = input.next();
+            String foodName = input.nextLine();
 
             // Create a DataReport and print results
             DataReport report = new DataReport(foodLogComm.fetchDataFromFood(foodName));

@@ -84,8 +84,8 @@ public class DataReport {
 
     /**
      * Inserts the proper number of spaces necessary to keep columns aligned. Number
-     * of spaces is determined using the length of the given String and the standard
-     * given column width parameter. The maximum width of any column in the food log
+     * of spaces is determined using the length of the given String and the given
+     * column width parameter. The maximum width of any column in the food log mySQL
      * database is 30 characters (except for the last column), so the maximum column
      * width given as a parameter should be limited to 32 characters.
      * @param strEntry String to insert spaces after
