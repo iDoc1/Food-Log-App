@@ -1,11 +1,13 @@
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Provides a console interface by which the user can enter information
- * about food that they ate on specific days for specific meals. The
- * user can add, delete and modify entries, display food log data, and
- * enter food-specific details such as calories per serving.
+ * Provides a command line interface by which the user can enter information
+ * about food that they ate on specific days for specific meals. The user can
+ * add, delete and edit entries, display food log data, and enter food-specific
+ * details such as calories per serving and food category.
  *
  * @author iDoc1
  *
@@ -22,8 +24,25 @@ public class FoodLogMain {
 
 
     public static void main(String[] args) {
+
+        // Introduce app
         introduction();
-        choseOption();
+
+        // Establish connection to the food log database to be passed as an argument
+        System.out.println("Connecting to database...");
+        FoodLogConnection foodLogConn = new FoodLogConnection();
+        FoodLogComm foodLogComm = new FoodLogComm(foodLogConn);
+
+        // Begin app session
+        boolean continueSession = true;
+        while (continueSession) {
+            choseOption(foodLogComm);
+
+            // Ask if user would like to continue using app
+            continueSession = returnToMenu(foodLogComm);
+        }
+
+        System.out.println("\nThanks for using! Good bye.");
     }
 
     /**
@@ -39,8 +58,10 @@ public class FoodLogMain {
 
     /**
      * Presents user with options to modify the food log, add food details, or view data
+     * @param foodLogComm   Object used to modify and query the food log database
      */
-    public static void choseOption() {
+    public static void choseOption(FoodLogComm foodLogComm) {
+        System.out.println();
         System.out.println("Choose an option:");
         System.out.println("1: Add, delete, or modify food log entries");
         System.out.println("2: Add food details");
@@ -56,11 +77,6 @@ public class FoodLogMain {
             userOption = input.next();
         }
 
-        // Establish connection to the food log database to be passed as an argument
-        System.out.println("\nConnecting to database...");
-        FoodLogConnection foodLogConn = new FoodLogConnection();
-        FoodLogComm foodLogComm = new FoodLogComm(foodLogConn);
-
         // Proceed forward based on user's chosen option
         System.out.println();
         if (userOption.equals("1")) {
@@ -70,6 +86,26 @@ public class FoodLogMain {
         } else {
             viewData(foodLogComm);
         }
+    }
+
+    /**
+     * Ask user if they would like to return to the main menu or exit the app
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
+    public static boolean returnToMenu(FoodLogComm foodLogComm) {
+        System.out.println();
+        System.out.println("Would you like to return to the main menu?");
+        System.out.print("Type 'y' if yes, or any other key to exit the app: ");
+
+        // Get user answer and route accordingly
+        Scanner input = new Scanner(System.in);
+        String answer = input.nextLine();
+
+        if (answer.equalsIgnoreCase("y")) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -122,7 +158,7 @@ public class FoodLogMain {
             // Ask if user wants to add another entry
             System.out.println();
             System.out.println("Would you like to add another entry?");
-            System.out.print("Type 'y' if yes, any other key if no: ");
+            System.out.print("Type 'y' if yes, or any other key if no: ");
 
             Scanner input = new Scanner(System.in);
             String answer = input.nextLine();
@@ -257,8 +293,94 @@ public class FoodLogMain {
     }
 
     public static void editEntry(FoodLogComm foodLogComm) {
-        // Display data given a date range
-        // Ask user to input entry_id of record to delete
+        System.out.println();
+        System.out.println("Please provide a date range in which the entry you would like to edit resides.");
+
+        // Get date range from user
+        Scanner input = new Scanner(System.in);
+        System.out.println();
+        System.out.print("Start date (yyyy-MM-dd): ");
+        String startDate = input.nextLine();
+        System.out.print("End date (yyyy-MM-dd): ");
+        String endDate = input.nextLine();
+
+        // Ensure given dates are valid
+        ResultSet resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
+        while (resultSet == null) {
+            System.out.println("One or both dates are invalid. Please enter valid dates.");
+            System.out.print("Enter start date (yyyy-MM-dd): ");
+            startDate = input.nextLine();
+            System.out.print("Enter end date (yyyy-MM-dd): ");
+            endDate = input.nextLine();
+
+            resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
+        }
+
+        // Print all rows within given date range
+        System.out.println();
+        DataReport report = new DataReport(resultSet);
+        report.printResults();
+
+        // Ask user to input entry ID of record to edit
+        System.out.println();
+        System.out.print("Enter the Entry ID of the record you would like to edit: ");
+
+        // Validate that given entry ID is an integer
+        int entryID;
+        while (true) {
+            try {
+                String stringEntryID = input.nextLine();
+                entryID = Integer.parseInt(stringEntryID);  // String to int conversion
+                break;  // break if no exception thrown
+            } catch (NumberFormatException e) {
+                System.out.println("Entry ID must be an integer.");
+                System.out.print("Re-enter Entry ID: ");
+            }
+        }
+
+        // Display row of entry ID that user wants to modify
+        System.out.println();
+        DataReport entryRow = new DataReport(foodLogComm.fetchDataFromID(entryID));
+        resultsMap = entryRow.printResults();
+
+        // Get new input for database fields that user would like to edit
+        System.out.println();
+        System.out.println("Enter new info for fields you would like to change below.");
+        System.out.println("Leave the line blank if you do not want to change the field.");
+
+        System.out.print("Entry Date: ");
+        String entryDate = input.nextLine();
+
+        System.out.print("Food Name: ");
+        String foodName = input.nextLine();
+
+        System.out.print("Meal Type: ");
+        String mealType = input.nextLine().toLowerCase();
+
+        // Ensure meal type is valid
+        while (!mealTypes.contains(mealType) && !mealType.equals("")) {
+            System.out.println("Meal type must be breakfast, lunch, dinner, brunch, or snack.");
+            System.out.print("Re-renter meal type: ");
+            mealType = input.nextLine().toLowerCase();
+        }
+
+        System.out.print("Serving Quantity: ");
+        double servingQuantity;  // Initialize serving quantity
+
+        // Ensure serving quantity is valid
+        while (true) {
+            try {
+                String servingInput = input.nextLine();
+                servingQuantity = Double.parseDouble(servingInput);  // String to double conversion
+                break;  // break if no exception thrown
+            } catch (NumberFormatException e) {
+                System.out.println("Serving quantity must be a number.");
+                System.out.print("Re-enter serving quantity: ");
+            }
+        }
+
+        // Get original data from report
+
     }
 
     /**
@@ -283,7 +405,7 @@ public class FoodLogMain {
         while (true) {
             try {
                 String caloriesInput = input.nextLine();
-                calories = Integer.parseInt(caloriesInput);  // String to double conversion
+                calories = Integer.parseInt(caloriesInput);  // String to int conversion
                 break;  // break if no exception thrown
             } catch (NumberFormatException e) {
                 System.out.println("kCal/serving must be an integer.");

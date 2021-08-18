@@ -1,5 +1,6 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * This class represents a Data Report where a ResultSet is passed to the
@@ -48,6 +49,9 @@ public class DataReport {
         System.out.print("Meal Type" + "       ");
         System.out.print("Serving Qty" + "     ");
         System.out.println("Entry Notes");
+
+        // Create map to store and return result data
+        HashMap<Integer, FoodEntry> resultMap =
 
         // Print results and handle exception
         try {
