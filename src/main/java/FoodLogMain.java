@@ -82,7 +82,7 @@ public class FoodLogMain {
         // Present options to user for how to proceed
         System.out.println("Please choose from the following options to modify the food log:");
         System.out.println("1: Add one or more entries");
-        System.out.println("2: Delete one or more entries");
+        System.out.println("2: Delete old entries");
         System.out.println("3: Edit a specific entry");
 
         // Validate user input
@@ -187,7 +187,7 @@ public class FoodLogMain {
         // Create FoodDetails and FoodLogComm objects
         FoodDetails foodEaten = new FoodDetails(foodName, mealType, servingQuantity);
 
-        // Create entry object depending on if user entered an entry date or not
+        // Insert record depending on if user entered a date or not
         boolean success;
         if (entryDate.equals("")) {
             success = foodLogComm.insertRowCurrDate(foodEaten, notes);
@@ -195,7 +195,7 @@ public class FoodLogMain {
             success = foodLogComm.insertRowGivenDate(foodEaten, entryDate, notes);
         }
 
-        // Add entry to database and check if insertion was successful
+        // Check if insertion was successful
         if (success) {
             System.out.println("\nEntry successfully added.");
         } else {
@@ -203,12 +203,62 @@ public class FoodLogMain {
         }
     }
 
+    /**
+     * Asks user how far back they would like to delete entries by, then deletes all
+     * entries in the food log database older than the chosen option
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
     public static void deleteEntry(FoodLogComm foodLogComm) {
+        System.out.println();
+        System.out.println("Choose an option to delete entries older than:");
+        System.out.println("1: One week");
+        System.out.println("2: One month");
+        System.out.println("3: 6 months");
+        System.out.println("4: One year");
 
+        // Get option from user
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter option: ");
+        String userOption = input.next();
+
+        // Ensure option given is valid
+        while (!userOption.equals("1") && !userOption.equals("2")
+                && !userOption.equals("3") && !userOption.equals("4")) {
+            System.out.print("Invalid choice. Please enter a valid option: ");
+            userOption = input.next();
+        }
+
+        // Set the number of days older than to delete
+        int deleteDays;
+        String deleteInterval;
+        if (userOption.equals("1")) {
+            deleteDays = 7;
+            deleteInterval = "1 week";
+        } else if (userOption.equals("2")) {
+            deleteDays = 30;  // Roughly 1 month
+            deleteInterval = "1 month";
+        } else if (userOption.equals("3")) {
+            deleteDays = 182;  // Roughly 6 months
+            deleteInterval = "6 months";
+        } else {
+            deleteDays = 365;
+            deleteInterval = "1 year";
+        }
+
+        // Delete entries older than deleteDays
+        boolean success = foodLogComm.deleteOldEntries(deleteDays);
+
+        // Check if deletion was successful
+        if (success) {
+            System.out.println("\nAll entries older than " + deleteInterval + " have been deleted.");
+        } else {
+            System.out.println("\nError: records not deleted.");
+        }
     }
 
     public static void editEntry(FoodLogComm foodLogComm) {
-
+        // Display data given a date range
+        // Ask user to input entry_id of record to delete
     }
 
     /**

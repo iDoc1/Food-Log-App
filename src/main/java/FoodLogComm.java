@@ -102,7 +102,8 @@ public class FoodLogComm {
      *              null if the given date String throws an exception
      */
     public ResultSet fetchDataFromDate(String date) {
-        String sqlQuery = "SELECT * FROM food_log_database.food_log a WHERE a.entry_date = ?";
+        String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
+                "WHERE a.entry_date = ? ORDER BY a.entry_date";
 
         // Execute query and handle exception
         try {
@@ -124,7 +125,7 @@ public class FoodLogComm {
      */
     public ResultSet fetchDataFromDateRange(String startDate, String endDate) {
         String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
-                "WHERE a.entry_date >= ? AND a.entry_date <= ?";
+                "WHERE a.entry_date >= ? AND a.entry_date <= ? ORDER BY a.entry_date";
 
         // Execute query and handle exception
         try {
@@ -146,7 +147,7 @@ public class FoodLogComm {
      */
     public ResultSet fetchDataFromFood(String foodName) {
         String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
-                "WHERE a.food_name LIKE ?";
+                "WHERE a.food_name LIKE ? ORDER BY a.entry_date";
 
         // Execute query and handle exception
         try {
@@ -156,6 +157,27 @@ public class FoodLogComm {
         } catch (SQLException e) {
             return null;  // Return null if an exception is thrown
         }
+    }
+
+    /**
+     * Deletes all entries in the food log that are older than the given number
+     * of days parameter
+     * @param deleteDays    Number of days older than to delete
+     * @return              true if deletion successful, false otherwise
+     */
+    public boolean deleteOldEntries(int deleteDays) {
+        String sqlString = "DELETE FROM food_log_database.food_log a " +
+                "WHERE a.entry_date < CURDATE() - INTERVAL ? DAY";
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlString);
+            statement.setInt(1, deleteDays);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
