@@ -25,6 +25,43 @@ public class DataReport {
     }
 
     /**
+     * Returns a HashMap where the keys are the entry IDs of each entry in this
+     * object's ResultSet field, and the values are FoodEntry objects containing
+     * the data stored in each column corresponding to the entry ID.
+     * @return  A HashMap<K,V> where K is the entry ID, and V is a FoodEntry object
+     */
+    public HashMap<Integer, FoodEntry> getResultsMap() {
+        HashMap<Integer, FoodEntry> resultMap = new HashMap<Integer, FoodEntry>();
+
+        // Populate HashMap with Integer-FoodEntry pairs
+        try {
+
+            // Ensure cursor is at front of ResultSet
+            this.results.beforeFirst();
+
+            // Iterate over results and add each row to the Map
+            while (results.next()) {
+                int entryID = results.getInt("entry_id");
+                String entryDate = results.getString("entry_date");
+                String foodName = results.getString("food_name");
+                String mealType = results.getString("meal_type");
+                double servingQty = results.getDouble("serving_quantity");
+                String entryNotes = results.getString("entry_notes");
+
+                // Create FoodEntry object
+                FoodEntry foodEntry = new FoodEntry(entryDate, foodName, mealType, servingQty, entryNotes);
+
+                // Store row in HashMap
+                resultMap.put(entryID, foodEntry);
+            }
+        } catch(SQLException e) {
+            return null;
+        }
+
+        return resultMap;
+    }
+
+    /**
      * Prints all of the results in a table format separated by spaces to
      * keep columns aligned. Spaces are used instead of tabs to ensure
      * columns remain aligned if users have different tab sizes settings.
@@ -50,11 +87,11 @@ public class DataReport {
         System.out.print("Serving Qty" + "     ");
         System.out.println("Entry Notes");
 
-        // Create map to store and return result data
-        HashMap<Integer, FoodEntry> resultMap =
-
         // Print results and handle exception
         try {
+
+            // Ensure cursor is a front of ResultSet
+            this.results.beforeFirst();
 
             // Loop through results set and add the proper number of spaces
             while (results.next()) {

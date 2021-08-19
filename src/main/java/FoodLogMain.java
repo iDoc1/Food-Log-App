@@ -210,6 +210,15 @@ public class FoodLogMain {
             try {
                 String servingInput = input.nextLine();
                 servingQuantity = Double.parseDouble(servingInput);  // String to double conversion
+
+                // Ensure quantity given is greater than zero
+                while (servingQuantity <= 0) {
+                    System.out.println("Serving quantity must be greater than zero.");
+                    System.out.print("Re-enter serving quantity: ");
+                    servingInput = input.nextLine();
+                    servingQuantity = Double.parseDouble(servingInput);
+                }
+
                 break;  // break if no exception thrown
             } catch (NumberFormatException e) {
                 System.out.println("Serving quantity must be a number.");
@@ -292,6 +301,12 @@ public class FoodLogMain {
         }
     }
 
+    /**
+     * Allows user to give a range of dates between which an entry they want to edit
+     * resides. Then, the user can specify the ID of the entry to edit, and the new
+     * values for each field they want to edit.
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
     public static void editEntry(FoodLogComm foodLogComm) {
         System.out.println();
         System.out.println("Please provide a date range in which the entry you would like to edit resides.");
@@ -316,10 +331,12 @@ public class FoodLogMain {
             resultSet = foodLogComm.fetchDataFromDateRange(startDate, endDate);
         }
 
-        // Print all rows within given date range
+        // Print all rows within given date range and store results in Map
         System.out.println();
         DataReport report = new DataReport(resultSet);
         report.printResults();
+
+        HashMap<Integer, FoodEntry> resultMap = report.getResultsMap();  // Store results in a Map
 
         // Ask user to input entry ID of record to edit
         System.out.println();
@@ -331,6 +348,15 @@ public class FoodLogMain {
             try {
                 String stringEntryID = input.nextLine();
                 entryID = Integer.parseInt(stringEntryID);  // String to int conversion
+
+                // Ensure that given entry ID is in the results that were queried
+                while (!resultMap.containsKey(entryID)) {
+                    System.out.println("Entry ID not in above results.");
+                    System.out.print("Enter a valid Entry ID: ");
+                    stringEntryID = input.nextLine();
+                    entryID = Integer.parseInt(stringEntryID);
+                }
+
                 break;  // break if no exception thrown
             } catch (NumberFormatException e) {
                 System.out.println("Entry ID must be an integer.");
@@ -339,39 +365,42 @@ public class FoodLogMain {
         }
 
         // Display row of entry ID that user wants to modify
-        System.out.println();
         DataReport entryRow = new DataReport(foodLogComm.fetchDataFromID(entryID));
-        resultsMap = entryRow.printResults();
 
         // Get new input for database fields that user would like to edit
         System.out.println();
-        System.out.println("Enter new info for fields you would like to change below.");
+        System.out.println("Enter new info for Entry ID# " + entryID + ".");
         System.out.println("Leave the line blank if you do not want to change the field.");
 
+        // Get new date, food name, and meal type from user
         System.out.print("Entry Date: ");
         String entryDate = input.nextLine();
-
         System.out.print("Food Name: ");
         String foodName = input.nextLine();
-
         System.out.print("Meal Type: ");
         String mealType = input.nextLine().toLowerCase();
 
         // Ensure meal type is valid
         while (!mealTypes.contains(mealType) && !mealType.equals("")) {
             System.out.println("Meal type must be breakfast, lunch, dinner, brunch, or snack.");
-            System.out.print("Re-renter meal type: ");
+            System.out.print("Re-enter meal type: ");
             mealType = input.nextLine().toLowerCase();
         }
 
+        // Get new serving quantity from user
         System.out.print("Serving Quantity: ");
-        double servingQuantity;  // Initialize serving quantity
+        double servingQuantity = 0.0;  // Initialize serving quantity
 
-        // Ensure serving quantity is valid
+        // Ensure new serving quantity is valid
         while (true) {
             try {
                 String servingInput = input.nextLine();
-                servingQuantity = Double.parseDouble(servingInput);  // String to double conversion
+
+                // Convert to double only if user did not input a blank line
+                if (!servingInput.equals("")) {
+                    servingQuantity = Double.parseDouble(servingInput);  // String to double conversion
+                }
+
                 break;  // break if no exception thrown
             } catch (NumberFormatException e) {
                 System.out.println("Serving quantity must be a number.");
@@ -379,8 +408,38 @@ public class FoodLogMain {
             }
         }
 
-        // Get original data from report
+        // Get new entry notes from user
+        System.out.print("Entry Notes: ");
+        String entryNotes = input.nextLine();
 
+        // Check which fields user left blank, then populate those with existing data in food log
+        if (entryDate.equals("")) {
+            entryDate = resultMap.get(entryID).getEntryDate();
+        }
+
+        if (foodName.equals("")) {
+            foodName = resultMap.get(entryID).getFoodName();
+        }
+
+        if (mealType.equals("")) {
+            mealType = resultMap.get(entryID).getMealType();
+        }
+
+        if (servingQuantity == 0) {
+            servingQuantity = resultMap.get(entryID).getServingQuantity();
+        }
+
+        if (entryNotes.equals("")) {
+            entryNotes = resultMap.get(entryID).getEntryNotes();
+        }
+
+        // Update food log database with new values
+        boolean success = foodLogComm.editEntry(entryID, entryDate, foodName, mealType, servingQuantity, entryNotes);
+        if (success) {
+            System.out.println("\nEntry ID# " + entryID + " successfully updated.");
+        } else {
+            System.out.println("\nError: entry not updated.");
+        }
     }
 
     /**

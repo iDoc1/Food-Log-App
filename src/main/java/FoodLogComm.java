@@ -86,7 +86,9 @@ public class FoodLogComm {
 
         // Execute query and handle exception
         try {
-            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1, rowID);
             return statement.executeQuery();  // Return ResultSet object
         } catch (SQLException e) {
@@ -107,7 +109,11 @@ public class FoodLogComm {
 
         // Execute query and handle exception
         try {
-            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+
+            // Ensure ResultSet will be scrollable
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
             statement.setString(1, date);
             return statement.executeQuery();  // Return ResultSet object
         } catch (SQLException e) {
@@ -129,7 +135,11 @@ public class FoodLogComm {
 
         // Execute query and handle exception
         try {
-            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+
+            // Ensure ResultSet will be scrollable
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
             statement.setString(1, startDate);
             statement.setString(2, endDate);
             return statement.executeQuery();  // Return ResultSet object
@@ -151,7 +161,9 @@ public class FoodLogComm {
 
         // Execute query and handle exception
         try {
-            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
             statement.setString(1, "%" + foodName + "%");
             return statement.executeQuery();  // Return ResultSet object
         } catch (SQLException e) {
@@ -172,6 +184,38 @@ public class FoodLogComm {
         try {
             PreparedStatement statement = this.connection.prepareStatement(sqlString);
             statement.setInt(1, deleteDays);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates a row with the given entry ID with the new values given
+     * @param entryID           entry ID of row
+     * @param entryDate         date of food entry
+     * @param foodName          name of food entry
+     * @param mealType          meal type of food entry
+     * @param servingQuantity   double value of serving quantity
+     * @param entryNotes        entry notes
+     * @return                  true if update is successful, false otherwise
+     */
+    public boolean editEntry(int entryID, String entryDate, String foodName
+            , String mealType, double servingQuantity, String entryNotes) {
+        String sqlString = "UPDATE food_log_database.food_log " +
+                "SET entry_date = ?, food_name = ?, meal_type = ?, serving_quantity = ?, " +
+                "entry_notes = ? WHERE entry_id = ?";
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlString);
+            statement.setString(1, entryDate);
+            statement.setString(2, foodName);
+            statement.setString(3, mealType);
+            statement.setDouble(4, servingQuantity);
+            statement.setString(5, entryNotes);
+            statement.setInt(6, entryID);
             statement.executeUpdate();
         } catch (SQLException e) {
             return false;
