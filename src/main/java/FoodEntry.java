@@ -14,11 +14,11 @@ public class FoodEntry {
 
     /**
      * Constructor for a FoodEntry object
-     * @param entryDate
-     * @param foodName
-     * @param mealType
-     * @param servingQuantity
-     * @param entryNotes
+     * @param entryDate         Date of food log entry
+     * @param foodName          Name of food in food log
+     * @param mealType          Meal type of food log entry
+     * @param servingQuantity   Serving quantity of food log entry
+     * @param entryNotes        Notes in food lgo entry
      */
     public FoodEntry(String entryDate, String foodName, String mealType, double servingQuantity, String entryNotes) {
         this.entryDate = entryDate;

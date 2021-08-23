@@ -64,7 +64,7 @@ public class FoodLogMain {
         System.out.println();
         System.out.println("Choose an option:");
         System.out.println("1: Add, delete, or modify food log entries");
-        System.out.println("2: Add food details");
+        System.out.println("2: Add or delete food details");
         System.out.println("3: View food log data");
 
         // Validate user input
@@ -82,7 +82,7 @@ public class FoodLogMain {
         if (userOption.equals("1")) {
             modifyFoodLog(foodLogComm);
         } else if (userOption.equals("2")) {
-            addFoodDetails(foodLogComm);
+            modifyFoodDetails(foodLogComm);
         } else {
             viewData(foodLogComm);
         }
@@ -443,12 +443,59 @@ public class FoodLogMain {
     }
 
     /**
+     * Asks user whether they want to add or delete calorie information for
+     * a specific food
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
+    public static void modifyFoodDetails(FoodLogComm foodLogComm) {
+        System.out.println("Choose an option to either add or delete food calorie details.");
+        System.out.println("1: Add food calorie information");
+        System.out.println("2: Delete food calorie information");
+        System.out.print("Enter option: ");
+
+        Scanner input = new Scanner(System.in);
+        String userOption = input.nextLine();
+
+        // Verify option chosen is valid
+        while (!userOption.equals("1") && !userOption.equals("2")) {
+           System.out.print("Invalid choice. Please enter option 1 or 2: ");
+           userOption = input.nextLine();
+        }
+
+        // Move forward based on given option
+        if (userOption.equals("1")) {
+
+            boolean addAnother = true;
+
+            // Allow user to add multiple entries until they choose to stop
+            while (addAnother) {
+                addFoodDetails(foodLogComm);
+
+                System.out.println();
+                System.out.println("Would you like to add another food details entry?");
+                System.out.print("Type 'y' if yes, or any other key if no: ");
+
+                // Update loop condition if user does not choose 'y'
+                String answer = input.nextLine();
+                if (!answer.equalsIgnoreCase("y")) {
+                    addAnother = false;
+                }
+            }
+
+        // Delete the entry from the food details table specified by user
+        } else {
+            deleteFoodDetails(foodLogComm);
+        }
+    }
+
+    /**
      * Asks user for calories per serving and food category details regarding a
      * specific food. This data is stored in a table in teh food log database and
      * is used while running certain data reports.
      * @param foodLogComm   Object used to modify and query the food log database
      */
     public static void addFoodDetails(FoodLogComm foodLogComm) {
+        System.out.println();
         System.out.println("Please enter the below information about a specific food.");
         System.out.println("This information is used when you run a data report so");
         System.out.println("that you can view data regarding your past meals.");
@@ -457,10 +504,17 @@ public class FoodLogMain {
         Scanner input = new Scanner(System.in);
         System.out.print("Food name: ");
         String foodName = input.nextLine();
-        System.out.print("kCal per serving: ");
+
+        // Ensure user does not leave food name blank
+        while (foodName.equals("")) {
+            System.out.print("Food name cannot be blank. Please enter food name: ");
+            foodName = input.nextLine();
+        }
 
         // Ensure calories input is an integer
+        System.out.print("kCal per serving: ");
         int calories;
+
         while (true) {
             try {
                 String caloriesInput = input.nextLine();
@@ -487,7 +541,31 @@ public class FoodLogMain {
         if (success) {
             System.out.println("\nFood details successfully added.");
         } else {
-            System.out.println("\nError: food details not added.");
+            System.out.println("\nError: food details not added. Ensure food is not already in food log.");
+        }
+    }
+
+    /**
+     * Asks user which food they want to delete calorie information for then
+     * deletes that entry from the food log calorie table
+     * @param foodLogComm   Object used to modify and query the food log database
+     */
+    public static void deleteFoodDetails(FoodLogComm foodLogComm) {
+        System.out.println();
+        System.out.print("Enter the name of the food that you want to delete: ");
+
+        Scanner input = new Scanner(System.in);
+        String food_name = input.nextLine();
+
+        // Delete entry that matches given food name
+        boolean success = foodLogComm.deleteFoodDetails(food_name);
+
+        // Inform user whether or not deletion was successful
+        if (success) {
+            System.out.println("\nDeletion successful.");
+        } else {
+            System.out.println("\nError: entry not deleted. Food name does not exist.");
+            System.out.println("Food must already exist in food log calories table to be deleted.");
         }
     }
 
@@ -506,8 +584,8 @@ public class FoodLogMain {
         System.out.println("1: View entries on a given date");
         System.out.println("2: View entries within a given date range");
         System.out.println("3: View entries containing a specific food");
-        System.out.println("4: Food log report for the last week");
-        System.out.println("5: Food log report for the last day");
+        System.out.println("4: Food log report for yesterday");
+        System.out.println("5: Food log report for the last week");
 
         // Receive user input
         Scanner input = new Scanner(System.in);
@@ -593,6 +671,10 @@ public class FoodLogMain {
         }
 
         // Ask if user would like to export the viewed data
+
+    }
+
+    public static void viewYesterdayReport(FoodLogComm foodLogComm) {
 
     }
 }

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class takes a connection to the food log database as a parameter
@@ -44,7 +45,7 @@ public class FoodLogComm {
         try {
             PreparedStatement statement = this.connection.prepareStatement(sqlString);
             statement.setString(1, entryDate);
-            statement.setString(2, foodEaten.getFoodName());
+            statement.setString(2, foodEaten.getFoodName().toLowerCase());
             statement.setString(3, foodEaten.getMealType());
             statement.setDouble(4, foodEaten.getServingQuantity());
             statement.setString(5, entryNotes);
@@ -171,6 +172,10 @@ public class FoodLogComm {
         }
     }
 
+    public ResultSet fetchYesterdayData() {
+
+    }
+
     /**
      * Deletes all entries in the food log that are older than the given number
      * of days parameter
@@ -211,7 +216,7 @@ public class FoodLogComm {
         try {
             PreparedStatement statement = this.connection.prepareStatement(sqlString);
             statement.setString(1, entryDate);
-            statement.setString(2, foodName);
+            statement.setString(2, foodName.toLowerCase());
             statement.setString(3, mealType);
             statement.setDouble(4, servingQuantity);
             statement.setString(5, entryNotes);
@@ -249,6 +254,43 @@ public class FoodLogComm {
         }
 
         return true;
+    }
+
+    /**
+     * Deletes the entry from the calorie table that matches the given food name
+     * @param foodName  name of the food
+     * @return          true if deletion successful, false otherwise
+     */
+    public boolean deleteFoodDetails(String foodName) {
+        String sqlString = "DELETE FROM food_log_database.calorie_table a " +
+                "WHERE a.food_name = ?";
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlString);
+            statement.setString(1, foodName.toLowerCase());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns a scrollable ResultSet with all data in the food log calorie table
+     * @return  A ResultSet of all food calorie data
+     */
+    public ResultSet getCalorieData() {
+        String sqlQuery = "SELECT * FROM food_log_database.calorie_table";
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
 }

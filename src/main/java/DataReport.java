@@ -142,6 +142,77 @@ public class DataReport {
     }
 
     /**
+     * Creates a YesterdayReport object to store total calories, meal count, and meal
+     * type count for all food eaten yesterday
+     * @param foodDetailsData   A ResultSet containing all food calorie data
+     * @return                  An object containing total calories, meal count, and meal
+     *                          type count for all food eaten yesterday
+     */
+    public YesterdayReport getYesterdayReportMap(ResultSet foodDetailsData) {
+
+        // Initialize yesterday report object
+        YesterdayReport yesterdayReport = new YesterdayReport();
+
+        // Pull all given food calories details from ResultSet into a Map
+        HashMap<String, FoodDetailsEntry> calorieMap = this.getCalorieMap(foodDetailsData);
+
+        try {
+            this.results.beforeFirst();
+
+            // Iterate through yesterday data ResultSet
+            while (foodDetailsData.next()) {
+                String foodName = foodDetailsData.getString("food_name");
+                String mealType = foodDetailsData.getString("meal_type");
+                int servingQuantity = foodDetailsData.getInt("serving_quantity");
+
+                // Check if calorie map contains the food name before storing calories
+                int foodCalories = 0;
+                if (calorieMap.containsKey(foodName)) {
+                    foodCalories = calorieMap.get(foodName).getCaloriesPerServing();
+                }
+
+                yesterdayReport.addTotalCalories(foodCalories, servingQuantity);
+                yesterdayReport.incrementMealType(mealType);
+            }
+
+
+        } catch (SQLException e) {
+            return null;
+        }
+
+        return yesterdayReport;
+    }
+
+    /**
+     * Takes a ResultSet with all food log calories data then returns a HashMap
+     * containing all data in the ResultSet where the food name is the key
+     * @param foodDetailsData   A ResultSet object containing all food log calorie data
+     * @return                  A HashMap with all calorie data in given ResultSet
+     */
+    private HashMap<String, FoodDetailsEntry> getCalorieMap(ResultSet foodDetailsData) {
+        HashMap<String, FoodDetailsEntry> calorieMap = new HashMap<String, FoodDetailsEntry>();
+
+        try {
+
+            // Iterate through food details ResultSet and add data to Map
+            while (foodDetailsData.next()) {
+                String foodName = foodDetailsData.getString("food_name");
+                int caloriesPerServing = foodDetailsData.getInt("calories_per_serving");
+                String foodCategory = foodDetailsData.getString("food_category");
+
+                // Create FoodDetailsEntry object and add to HashMap
+                FoodDetailsEntry calorieDetails = new FoodDetailsEntry(caloriesPerServing, foodCategory);
+                calorieMap.put(foodName, calorieDetails);
+            }
+
+        } catch (SQLException e) {
+            return null;
+        }
+
+        return calorieMap;
+    }
+
+    /**
      * Saves this object's ResultSet in CSV format
      */
     public void saveAsCSV() {
