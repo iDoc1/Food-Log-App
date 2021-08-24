@@ -148,7 +148,7 @@ public class DataReport {
      * @return                  An object containing total calories, meal count, and meal
      *                          type count for all food eaten yesterday
      */
-    public YesterdayReport getYesterdayReportMap(ResultSet foodDetailsData) {
+    public YesterdayReport getYesterdayReport(ResultSet foodDetailsData) {
 
         // Initialize yesterday report object
         YesterdayReport yesterdayReport = new YesterdayReport();
@@ -157,25 +157,27 @@ public class DataReport {
         HashMap<String, FoodDetailsEntry> calorieMap = this.getCalorieMap(foodDetailsData);
 
         try {
-            this.results.beforeFirst();
+            results.beforeFirst();
 
             // Iterate through yesterday data ResultSet
-            while (foodDetailsData.next()) {
-                String foodName = foodDetailsData.getString("food_name");
-                String mealType = foodDetailsData.getString("meal_type");
-                int servingQuantity = foodDetailsData.getInt("serving_quantity");
+            while (results.next()) {
+                String foodName = results.getString("food_name");
+                String mealType = results.getString("meal_type");
+                double servingQuantity = results.getDouble("serving_quantity");
 
                 // Check if calorie map contains the food name before storing calories
                 int foodCalories = 0;
                 if (calorieMap.containsKey(foodName)) {
                     foodCalories = calorieMap.get(foodName).getCaloriesPerServing();
+
+                    // Only increment food category count if food is found in calorie map
+                    yesterdayReport.increaseMealCategory(calorieMap.get(foodName).getFoodCategory(), servingQuantity);
                 }
 
+                // Update remaining values in yesterday report based on this row's contents
                 yesterdayReport.addTotalCalories(foodCalories, servingQuantity);
                 yesterdayReport.incrementMealType(mealType);
             }
-
-
         } catch (SQLException e) {
             return null;
         }
@@ -189,7 +191,7 @@ public class DataReport {
      * @param foodDetailsData   A ResultSet object containing all food log calorie data
      * @return                  A HashMap with all calorie data in given ResultSet
      */
-    private HashMap<String, FoodDetailsEntry> getCalorieMap(ResultSet foodDetailsData) {
+    public HashMap<String, FoodDetailsEntry> getCalorieMap(ResultSet foodDetailsData) {
         HashMap<String, FoodDetailsEntry> calorieMap = new HashMap<String, FoodDetailsEntry>();
 
         try {

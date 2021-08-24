@@ -1,6 +1,4 @@
-import javax.xml.crypto.Data;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -668,6 +666,8 @@ public class FoodLogMain {
             DataReport report = new DataReport(foodLogComm.fetchDataFromFood(foodName));
             System.out.println();
             report.printResults();
+        } else if (userOption == 4) {
+            viewYesterdayReport(foodLogComm);
         }
 
         // Ask if user would like to export the viewed data
@@ -675,6 +675,40 @@ public class FoodLogMain {
     }
 
     public static void viewYesterdayReport(FoodLogComm foodLogComm) {
+        System.out.println();
+        System.out.println("*****Yesterday Data Report*****");
 
+        // Get yesterday data ResultSet and create a DataReport
+        DataReport dataReport = new DataReport(foodLogComm.fetchYesterdayData());
+
+        // Create a YesterdayReport object using the data report above and a calorie data ResultSet
+        YesterdayReport yesterdayReport = dataReport.getYesterdayReport(foodLogComm.fetchCalorieData());
+
+        System.out.println();
+        System.out.println("Total calories: " + yesterdayReport.getTotalCalories());
+        System.out.println("Avg calories per meal: " + yesterdayReport.getCaloriesPerMeal());
+
+        // Print counts of meals eaten yesterday
+        HashMap<String, Integer> mealCounts = yesterdayReport.getMealTypeCount();  // Meal counts Map
+
+        System.out.println("\nMeals Eaten Yesterday:");
+        System.out.println("breakfast: " + mealCounts.get("breakfast"));
+        System.out.println("brunch: " + mealCounts.get("brunch"));
+        System.out.println("lunch: " + mealCounts.get("lunch"));
+        System.out.println("dinner: " + mealCounts.get("dinner"));
+        System.out.println("snack: " + mealCounts.get("snack"));
+
+        // Print counts of food categories eaten yesterday
+        HashMap<String, Double> categoryCounts = yesterdayReport.getMealCategoryCount();
+
+        System.out.println("\nServings of Food Categories Eaten Yesterday:");
+        System.out.println("grain: " + categoryCounts.get("grain"));
+        System.out.println("fruit: " + categoryCounts.get("fruit"));
+        System.out.println("vegetable: " + categoryCounts.get("vegetable"));
+        System.out.println("dairy: " + categoryCounts.get("dairy"));
+        System.out.println("protein: " + categoryCounts.get("protein"));
+        System.out.println("other: " + categoryCounts.get("other"));
+
+        System.out.println("\n*******************************");
     }
 }

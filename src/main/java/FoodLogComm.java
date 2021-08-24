@@ -172,8 +172,22 @@ public class FoodLogComm {
         }
     }
 
+    /**
+     * Returns a ResultSet with all entries with a date of yesterday
+     * @return  A ResultSet of yesterday's entries
+     */
     public ResultSet fetchYesterdayData() {
+        String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
+                "WHERE a.entry_date = CURDATE() - INTERVAL 1 DAY";
 
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
     /**
@@ -280,7 +294,7 @@ public class FoodLogComm {
      * Returns a scrollable ResultSet with all data in the food log calorie table
      * @return  A ResultSet of all food calorie data
      */
-    public ResultSet getCalorieData() {
+    public ResultSet fetchCalorieData() {
         String sqlQuery = "SELECT * FROM food_log_database.calorie_table";
 
         try {

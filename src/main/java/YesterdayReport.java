@@ -4,19 +4,29 @@ public class YesterdayReport {
     private double totalCalories;
     private int mealCount;
     private HashMap<String, Integer> mealTypeCount;  // Count of each type of meal eaten
+    private HashMap<String, Double> mealCategoryCount;  // Count of each meal cetegory eaten
 
     public YesterdayReport() {
         this.totalCalories = 0;
         this.mealCount = 0;
         this.mealTypeCount = new HashMap<String, Integer>();
 
-        // Initialize food category counts to zero
-        this.mealTypeCount.put("grain", 0);
-        this.mealTypeCount.put("vegetable", 0);
-        this.mealTypeCount.put("fruit", 0);
-        this.mealTypeCount.put("dairy", 0);
-        this.mealTypeCount.put("protein", 0);
-        this.mealTypeCount.put("other", 0);
+        // Initialize meal type counts to zero
+        this.mealTypeCount.put("breakfast", 0);
+        this.mealTypeCount.put("brunch", 0);
+        this.mealTypeCount.put("lunch", 0);
+        this.mealTypeCount.put("dinner", 0);
+        this.mealTypeCount.put("snack", 0);
+
+        this.mealCategoryCount = new HashMap<String, Double>();
+
+        // Initialize meal category counts to zero
+        this.mealCategoryCount.put("grain", 0.0);
+        this.mealCategoryCount.put("fruit", 0.0);
+        this.mealCategoryCount.put("vegetable", 0.0);
+        this.mealCategoryCount.put("dairy", 0.0);
+        this.mealCategoryCount.put("protein", 0.0);
+        this.mealCategoryCount.put("other", 0.0);
     }
 
     /**
@@ -33,19 +43,36 @@ public class YesterdayReport {
      * @return  Calories per meal eaten yesterday
      */
     public double getCaloriesPerMeal() {
-        return (double) this.totalCalories / this.mealCount;
+        if (this.totalCalories > 0) {
+            return this.totalCalories / this.mealCount;
+        } else {
+            return 0;
+        }
     }
 
     /**
-     * Increases the given meal type count to 1 if that meal type
-     * is currently zero. Otherwise, does nothing.
+     * Increases the given meal type count to 1 if that meal type is currently zero.
+     * Otherwise, does nothing. All meals except snacks are counted only once. Snacks
+     * are counted as many times as they occur in the food log.
      * @param mealType  Breakfast, brunch, lunch, dinner, or snack
      */
     public void incrementMealType(String mealType) {
-        if (this.mealTypeCount.get(mealType) == 0) {
-            this.mealTypeCount.put(mealType, 1);
-            this.mealCount = 1;
+
+        // Check if meal has already been counted (excluding snacks)
+        if (this.mealTypeCount.get(mealType) == 0 || mealType.equals("snack")) {
+            int currCount = this.mealTypeCount.get(mealType);
+            this.mealTypeCount.put(mealType, currCount + 1);  // Increment count
+            this.mealCount += 1;
         }
+    }
+
+    /**
+     * Increments the count of the given meal by one
+     * @param mealCategory  Meal category (grain, vegetable, fruit, protein, dairy, other)
+     */
+    public void increaseMealCategory(String mealCategory, double servingQuantity) {
+        double currentCount = this.mealCategoryCount.get(mealCategory);
+        this.mealCategoryCount.put(mealCategory, currentCount + servingQuantity);
     }
 
     /**
@@ -81,5 +108,12 @@ public class YesterdayReport {
      */
     public HashMap<String, Integer> getMealTypeCount() {
         return mealTypeCount;
+    }
+
+    /**
+     * @return Counts of category of meals eaten yesterday
+     */
+    public HashMap<String, Double> getMealCategoryCount() {
+        return mealCategoryCount;
     }
 }
