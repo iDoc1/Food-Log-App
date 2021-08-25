@@ -275,19 +275,17 @@ public class FoodLogComm {
      * @param foodName  name of the food
      * @return          true if deletion successful, false otherwise
      */
-    public boolean deleteFoodDetails(String foodName) {
+    public int deleteFoodDetails(String foodName) {
         String sqlString = "DELETE FROM food_log_database.calorie_table a " +
                 "WHERE a.food_name = ?";
 
         try {
             PreparedStatement statement = this.connection.prepareStatement(sqlString);
             statement.setString(1, foodName.toLowerCase());
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
-            return false;
+            return -1;
         }
-
-        return true;
     }
 
     /**

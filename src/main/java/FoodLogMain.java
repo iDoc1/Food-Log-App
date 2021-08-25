@@ -62,7 +62,7 @@ public class FoodLogMain {
         System.out.println();
         System.out.println("Choose an option:");
         System.out.println("1: Add, delete, or modify food log entries");
-        System.out.println("2: Add or delete food details");
+        System.out.println("2: Add or delete food calorie details");
         System.out.println("3: View food log data");
 
         // Validate user input
@@ -99,11 +99,7 @@ public class FoodLogMain {
         Scanner input = new Scanner(System.in);
         String answer = input.nextLine();
 
-        if (answer.equalsIgnoreCase("y")) {
-            return true;
-        }
-
-        return false;
+        return answer.equalsIgnoreCase("y");
     }
 
     /**
@@ -331,7 +327,7 @@ public class FoodLogMain {
 
         // Print all rows within given date range and store results in Map
         System.out.println();
-        DataReport report = new DataReport(resultSet);
+        ReportBuilder report = new ReportBuilder(resultSet);
         report.printResults();
 
         HashMap<Integer, FoodEntry> resultMap = report.getResultsMap();  // Store results in a Map
@@ -363,7 +359,9 @@ public class FoodLogMain {
         }
 
         // Display row of entry ID that user wants to modify
-        DataReport entryRow = new DataReport(foodLogComm.fetchDataFromID(entryID));
+        ReportBuilder entryRow = new ReportBuilder(foodLogComm.fetchDataFromID(entryID));
+        System.out.println();
+        entryRow.printResults();
 
         // Get new input for database fields that user would like to edit
         System.out.println();
@@ -553,17 +551,18 @@ public class FoodLogMain {
         System.out.print("Enter the name of the food that you want to delete: ");
 
         Scanner input = new Scanner(System.in);
-        String food_name = input.nextLine();
+        String foodName = input.nextLine();
 
         // Delete entry that matches given food name
-        boolean success = foodLogComm.deleteFoodDetails(food_name);
+        int deletedCount = foodLogComm.deleteFoodDetails(foodName);
 
         // Inform user whether or not deletion was successful
-        if (success) {
-            System.out.println("\nDeletion successful.");
+        if (deletedCount >= 1) {
+            System.out.println("\n" + deletedCount + " records deleted.");
+        } else if (deletedCount == 0) {
+            System.out.println("\n0 records deleted. Food name not yet stored in calorie table.");
         } else {
-            System.out.println("\nError: entry not deleted. Food name does not exist.");
-            System.out.println("Food must already exist in food log calories table to be deleted.");
+            System.out.println("\nError: entry not deleted. Database issue encountered.");
         }
     }
 
@@ -627,7 +626,7 @@ public class FoodLogMain {
             }
 
             // Create DataReport and print results
-            DataReport report = new DataReport(resultSet);
+            ReportBuilder report = new ReportBuilder(resultSet);
             System.out.println();
             report.printResults();
 
@@ -653,7 +652,7 @@ public class FoodLogMain {
             }
 
             // Create DataReport and print results
-            DataReport report = new DataReport(resultSet);
+            ReportBuilder report = new ReportBuilder(resultSet);
             System.out.println();
             report.printResults();
         } else if (userOption == 3) {
@@ -663,11 +662,13 @@ public class FoodLogMain {
             String foodName = input.nextLine();
 
             // Create a DataReport and print results
-            DataReport report = new DataReport(foodLogComm.fetchDataFromFood(foodName));
+            ReportBuilder report = new ReportBuilder(foodLogComm.fetchDataFromFood(foodName));
             System.out.println();
             report.printResults();
         } else if (userOption == 4) {
             viewYesterdayReport(foodLogComm);
+        } else {
+            // viewLastMonthReport
         }
 
         // Ask if user would like to export the viewed data
@@ -677,12 +678,16 @@ public class FoodLogMain {
     public static void viewYesterdayReport(FoodLogComm foodLogComm) {
         System.out.println();
         System.out.println("*****Yesterday Data Report*****");
+        System.out.println();
+        System.out.println("Note: Any foods not recorded in the calorie table");
+        System.out.println("will not count towards this report. Enter all foods in");
+        System.out.println("calorie table for report to be accurate.");
 
         // Get yesterday data ResultSet and create a DataReport
-        DataReport dataReport = new DataReport(foodLogComm.fetchYesterdayData());
+        ReportBuilder reportBuilder = new ReportBuilder(foodLogComm.fetchYesterdayData());
 
-        // Create a YesterdayReport object using the data report above and a calorie data ResultSet
-        YesterdayReport yesterdayReport = dataReport.getYesterdayReport(foodLogComm.fetchCalorieData());
+        // Create a YesterdayReport object using the report builder above and a calorie data ResultSet
+        YesterdayReport yesterdayReport = reportBuilder.getYesterdayReport(foodLogComm.fetchCalorieData());
 
         System.out.println();
         System.out.println("Total calories: " + yesterdayReport.getTotalCalories());

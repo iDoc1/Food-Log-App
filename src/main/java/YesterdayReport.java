@@ -1,15 +1,24 @@
 import java.util.HashMap;
 
+/**
+ * This class represents a report that contains information about yesterday's
+ * meals. This class is used mainly by the ReportBuilder class to store and
+ * return information regarding yesterday's meals.
+ */
+
 public class YesterdayReport {
     private double totalCalories;
     private int mealCount;
     private HashMap<String, Integer> mealTypeCount;  // Count of each type of meal eaten
     private HashMap<String, Double> mealCategoryCount;  // Count of each meal cetegory eaten
 
+    /**
+     * Construct a YesterdayReport object and initialize data members
+     */
     public YesterdayReport() {
         this.totalCalories = 0;
         this.mealCount = 0;
-        this.mealTypeCount = new HashMap<String, Integer>();
+        this.mealTypeCount = new HashMap<>();
 
         // Initialize meal type counts to zero
         this.mealTypeCount.put("breakfast", 0);
@@ -18,7 +27,7 @@ public class YesterdayReport {
         this.mealTypeCount.put("dinner", 0);
         this.mealTypeCount.put("snack", 0);
 
-        this.mealCategoryCount = new HashMap<String, Double>();
+        this.mealCategoryCount = new HashMap<>();
 
         // Initialize meal category counts to zero
         this.mealCategoryCount.put("grain", 0.0);
@@ -70,7 +79,7 @@ public class YesterdayReport {
      * Increments the count of the given meal by one
      * @param mealCategory  Meal category (grain, vegetable, fruit, protein, dairy, other)
      */
-    public void increaseMealCategory(String mealCategory, double servingQuantity) {
+    public void incrementMealCategory(String mealCategory, double servingQuantity) {
         double currentCount = this.mealCategoryCount.get(mealCategory);
         this.mealCategoryCount.put(mealCategory, currentCount + servingQuantity);
     }

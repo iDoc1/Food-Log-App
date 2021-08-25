@@ -3,6 +3,9 @@
  * data regarding the calories per serving and food category of a specific
  * food. This class is used to store data this is pulled from a specific
  * row in the food log calorie table.
+ *
+ * @author iDoc1
+ *
  */
 public class FoodDetailsEntry {
     private int caloriesPerServing;

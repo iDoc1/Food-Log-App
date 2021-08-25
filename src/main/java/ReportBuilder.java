@@ -3,16 +3,18 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 /**
- * This class represents a Data Report where a ResultSet is passed to the
+ * This class represents a Report Builder that uses a ResultSet passed to the
  * constructor. The methods in this class can be used to print the given
- * ResultSet to the console, or export the ResultSet in JSON or CSV format
- * to be used by another application.
+ * ResultSet to the console, pass the results as a Map, or compile and
+ * return the results in a YesterdayReport or MonthReport object. The main
+ * function of this class is to take a ResultSet and build a usable report
+ * out of it.
  *
  * @author iDoc1
  *
  */
 
-public class DataReport {
+public class ReportBuilder {
 
     private ResultSet results;
 
@@ -20,7 +22,7 @@ public class DataReport {
      * Constructs a DataReport object given a ResultSet object parameter
      * @param results   A ResultSet object obtained from a database query
      */
-    public DataReport(ResultSet results) {
+    public ReportBuilder(ResultSet results) {
         this.results = results;
     }
 
@@ -31,7 +33,7 @@ public class DataReport {
      * @return  A HashMap<K,V> where K is the entry ID, and V is a FoodEntry object
      */
     public HashMap<Integer, FoodEntry> getResultsMap() {
-        HashMap<Integer, FoodEntry> resultMap = new HashMap<Integer, FoodEntry>();
+        HashMap<Integer, FoodEntry> resultMap = new HashMap<>();
 
         // Populate HashMap with Integer-FoodEntry pairs
         try {
@@ -171,7 +173,7 @@ public class DataReport {
                     foodCalories = calorieMap.get(foodName).getCaloriesPerServing();
 
                     // Only increment food category count if food is found in calorie map
-                    yesterdayReport.increaseMealCategory(calorieMap.get(foodName).getFoodCategory(), servingQuantity);
+                    yesterdayReport.incrementMealCategory(calorieMap.get(foodName).getFoodCategory(), servingQuantity);
                 }
 
                 // Update remaining values in yesterday report based on this row's contents
@@ -192,7 +194,7 @@ public class DataReport {
      * @return                  A HashMap with all calorie data in given ResultSet
      */
     public HashMap<String, FoodDetailsEntry> getCalorieMap(ResultSet foodDetailsData) {
-        HashMap<String, FoodDetailsEntry> calorieMap = new HashMap<String, FoodDetailsEntry>();
+        HashMap<String, FoodDetailsEntry> calorieMap = new HashMap<>();
 
         try {
 
@@ -213,19 +215,4 @@ public class DataReport {
 
         return calorieMap;
     }
-
-    /**
-     * Saves this object's ResultSet in CSV format
-     */
-    public void saveAsCSV() {
-
-    }
-
-    /**
-     * Saves this object's ResultSet in JSON format
-     */
-    public void saveAsJson() {
-
-    }
-
 }
