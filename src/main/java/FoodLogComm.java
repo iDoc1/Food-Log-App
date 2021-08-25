@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * This class takes a connection to the food log database as a parameter
@@ -179,6 +178,24 @@ public class FoodLogComm {
     public ResultSet fetchYesterdayData() {
         String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
                 "WHERE a.entry_date = CURDATE() - INTERVAL 1 DAY";
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery
+                    , ResultSet.TYPE_SCROLL_SENSITIVE
+                    , ResultSet.CONCUR_READ_ONLY);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a ResultSet with all entries within the last month
+     * @return  A ResultSet of the past month's entries
+     */
+    public ResultSet fetchMonthData() {
+        String sqlQuery = "SELECT * FROM food_log_database.food_log a " +
+                "WHERE a.entry_date >= CURDATE() - INTERVAL 1 MONTH";
 
         try {
             PreparedStatement statement = this.connection.prepareStatement(sqlQuery

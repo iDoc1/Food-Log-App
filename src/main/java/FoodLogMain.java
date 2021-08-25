@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -666,54 +667,72 @@ public class FoodLogMain {
             System.out.println();
             report.printResults();
         } else if (userOption == 4) {
-            viewYesterdayReport(foodLogComm);
+
+            // Create ReportBuilder using yesterday's meal data
+            ReportBuilder reportBuilder = new ReportBuilder(foodLogComm.fetchYesterdayData());
+
+            // Create a DataReport using report builder and all data in calorie table
+            DataReport dataReport = reportBuilder.getDataReport(foodLogComm.fetchCalorieData());
+
+            System.out.println();
+            System.out.println("*****Yesterday Data Report*****");
+            viewDataReport(dataReport);
+            System.out.println("\n*******************************");
         } else {
-            // viewLastMonthReport
+
+            // Create ReportBuilder using last month's meal data
+            ReportBuilder reportBuilder = new ReportBuilder(foodLogComm.fetchMonthData());
+
+            // Create a DataReport using report builder and all data in calorie table
+            DataReport dataReport = reportBuilder.getDataReport(foodLogComm.fetchCalorieData());
+
+            System.out.println();
+            System.out.println("*****Past Month Data Report*****");
+            viewDataReport(dataReport);
+            System.out.println("\n*******************************");
         }
-
-        // Ask if user would like to export the viewed data
-
     }
 
-    public static void viewYesterdayReport(FoodLogComm foodLogComm) {
+    /**
+     * Prints a data report containing info about total calories eaten, average
+     * calories per meal, meal quantities eaten, and meal categories eaten
+     * during a given time period as specified in the given DataReport.
+     * @param dataReport    Object that contains all data report information
+     */
+    public static void viewDataReport(DataReport dataReport) {
         System.out.println();
-        System.out.println("*****Yesterday Data Report*****");
-        System.out.println();
-        System.out.println("Note: Any foods not recorded in the calorie table");
+        System.out.println("Note #1: Any foods not recorded in the calorie table");
         System.out.println("will not count towards this report. Enter all foods in");
         System.out.println("calorie table for report to be accurate.");
-
-        // Get yesterday data ResultSet and create a DataReport
-        ReportBuilder reportBuilder = new ReportBuilder(foodLogComm.fetchYesterdayData());
-
-        // Create a YesterdayReport object using the report builder above and a calorie data ResultSet
-        YesterdayReport yesterdayReport = reportBuilder.getYesterdayReport(foodLogComm.fetchCalorieData());
+        System.out.println();
+        System.out.println("Note #2: This program only counts one meal per day for");
+        System.out.println("breakfast, brunch, lunch, and dinner. If user has two");
+        System.out.println("dinners on same day, this only counts as one. Snacks are");
+        System.out.println("counted as many times as they occur, with no limit.");
 
         System.out.println();
-        System.out.println("Total calories: " + yesterdayReport.getTotalCalories());
-        System.out.println("Avg calories per meal: " + yesterdayReport.getCaloriesPerMeal());
+        System.out.println("Total calories: " + dataReport.getTotalCalories());
+        System.out.println("Avg calories per meal: " + dataReport.getCaloriesPerMeal());
 
-        // Print counts of meals eaten yesterday
-        HashMap<String, Integer> mealCounts = yesterdayReport.getMealTypeCount();  // Meal counts Map
+        // Print counts of meals eaten
+        HashMap<String, Integer> mealCounts = dataReport.getMealTypeCount();  // Meal counts Map
 
-        System.out.println("\nMeals Eaten Yesterday:");
+        System.out.println("\nMeals Eaten:");
         System.out.println("breakfast: " + mealCounts.get("breakfast"));
         System.out.println("brunch: " + mealCounts.get("brunch"));
         System.out.println("lunch: " + mealCounts.get("lunch"));
         System.out.println("dinner: " + mealCounts.get("dinner"));
         System.out.println("snack: " + mealCounts.get("snack"));
 
-        // Print counts of food categories eaten yesterday
-        HashMap<String, Double> categoryCounts = yesterdayReport.getMealCategoryCount();
+        // Print counts of food categories eaten
+        HashMap<String, Double> categoryCounts = dataReport.getMealCategoryCount();
 
-        System.out.println("\nServings of Food Categories Eaten Yesterday:");
+        System.out.println("\nServings of Food Categories Eaten:");
         System.out.println("grain: " + categoryCounts.get("grain"));
         System.out.println("fruit: " + categoryCounts.get("fruit"));
         System.out.println("vegetable: " + categoryCounts.get("vegetable"));
         System.out.println("dairy: " + categoryCounts.get("dairy"));
         System.out.println("protein: " + categoryCounts.get("protein"));
         System.out.println("other: " + categoryCounts.get("other"));
-
-        System.out.println("\n*******************************");
     }
 }

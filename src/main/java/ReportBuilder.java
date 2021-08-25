@@ -1,14 +1,14 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * This class represents a Report Builder that uses a ResultSet passed to the
  * constructor. The methods in this class can be used to print the given
  * ResultSet to the console, pass the results as a Map, or compile and
- * return the results in a YesterdayReport or MonthReport object. The main
- * function of this class is to take a ResultSet and build a usable report
- * out of it.
+ * return the results in a DataReport object. The main function of this class
+ * is to take a ResultSet and build a usable report out of it.
  *
  * @author iDoc1
  *
@@ -144,16 +144,16 @@ public class ReportBuilder {
     }
 
     /**
-     * Creates a YesterdayReport object to store total calories, meal count, and meal
-     * type count for all food eaten yesterday
+     * Creates a DataReport object to store total calories, meal count, and meal
+     * type count for all food eaten in this object's ResultSet
      * @param foodDetailsData   A ResultSet containing all food calorie data
      * @return                  An object containing total calories, meal count, and meal
-     *                          type count for all food eaten yesterday
+     *                          type count for all food eaten in this object's ResultSet
      */
-    public YesterdayReport getYesterdayReport(ResultSet foodDetailsData) {
+    public DataReport getDataReport(ResultSet foodDetailsData) {
 
-        // Initialize yesterday report object
-        YesterdayReport yesterdayReport = new YesterdayReport();
+        // Initialize DataReport object
+        DataReport dataReport = new DataReport();
 
         // Pull all given food calories details from ResultSet into a Map
         HashMap<String, FoodDetailsEntry> calorieMap = this.getCalorieMap(foodDetailsData);
@@ -161,8 +161,12 @@ public class ReportBuilder {
         try {
             results.beforeFirst();
 
-            // Iterate through yesterday data ResultSet
+            // Create Map to store previous meals by date to get accurate meal counts
+            HashMap<String, ArrayList<String>> mealsByDate = new HashMap<>();
+
+            // Iterate through data in ResultSet
             while (results.next()) {
+                String entryDate = results.getString("entry_date");
                 String foodName = results.getString("food_name");
                 String mealType = results.getString("meal_type");
                 double servingQuantity = results.getDouble("serving_quantity");
@@ -173,18 +177,34 @@ public class ReportBuilder {
                     foodCalories = calorieMap.get(foodName).getCaloriesPerServing();
 
                     // Only increment food category count if food is found in calorie map
-                    yesterdayReport.incrementMealCategory(calorieMap.get(foodName).getFoodCategory(), servingQuantity);
+                    dataReport.incrementMealCategory(calorieMap.get(foodName).getFoodCategory(), servingQuantity);
                 }
 
-                // Update remaining values in yesterday report based on this row's contents
-                yesterdayReport.addTotalCalories(foodCalories, servingQuantity);
-                yesterdayReport.incrementMealType(mealType);
+                // Update total calorie count
+                dataReport.addTotalCalories(foodCalories, servingQuantity);
+
+                // Check if date is already in Map
+                if (!mealsByDate.containsKey(entryDate)) {
+                    mealsByDate.put(entryDate, new ArrayList<>());
+                }
+
+                /*  Only increment meal type count if this row's meal has not already occurred
+                    on this row's date. Snacks are the only exception to this rule, and they
+                    are counted as many times as they occur. All other meals are only incremented
+                    once per day. This only allows user to have one breakfast, brunch, lunch, or
+                    dinner. If user has two dinners, those will only be counted as one meal for
+                    that day.
+                 */
+                if (!mealsByDate.get(entryDate).contains(mealType)  || mealType.equals("snack")) {
+                    dataReport.incrementMealType(mealType);  // Increment meal type count
+                    mealsByDate.get(entryDate).add(mealType);  // Add meal type to array where entryDate is the key
+                }
             }
         } catch (SQLException e) {
             return null;
         }
 
-        return yesterdayReport;
+        return dataReport;
     }
 
     /**

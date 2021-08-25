@@ -4,9 +4,12 @@ import java.util.HashMap;
  * This class represents a report that contains information about yesterday's
  * meals. This class is used mainly by the ReportBuilder class to store and
  * return information regarding yesterday's meals.
+ *
+ * @author iDoc1
+ *
  */
 
-public class YesterdayReport {
+public class DataReport {
     private double totalCalories;
     private int mealCount;
     private HashMap<String, Integer> mealTypeCount;  // Count of each type of meal eaten
@@ -15,7 +18,7 @@ public class YesterdayReport {
     /**
      * Construct a YesterdayReport object and initialize data members
      */
-    public YesterdayReport() {
+    public DataReport() {
         this.totalCalories = 0;
         this.mealCount = 0;
         this.mealTypeCount = new HashMap<>();
@@ -60,19 +63,13 @@ public class YesterdayReport {
     }
 
     /**
-     * Increases the given meal type count to 1 if that meal type is currently zero.
-     * Otherwise, does nothing. All meals except snacks are counted only once. Snacks
-     * are counted as many times as they occur in the food log.
-     * @param mealType  Breakfast, brunch, lunch, dinner, or snack
+     * Increments the meal type count by one based on the given meal type
+     * @param mealType  Meal type (breakfast, brunch, lunch, dinner, or snack)
      */
     public void incrementMealType(String mealType) {
-
-        // Check if meal has already been counted (excluding snacks)
-        if (this.mealTypeCount.get(mealType) == 0 || mealType.equals("snack")) {
-            int currCount = this.mealTypeCount.get(mealType);
-            this.mealTypeCount.put(mealType, currCount + 1);  // Increment count
-            this.mealCount += 1;
-        }
+        int currCount = this.mealTypeCount.get(mealType);
+        this.mealTypeCount.put(mealType, currCount + 1);  // Increment count
+        this.mealCount += 1;
     }
 
     /**
