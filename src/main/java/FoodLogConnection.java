@@ -36,4 +36,11 @@ public class FoodLogConnection {
     public Connection getFoodLogConnection() {
         return this.connection;
     }
+
+    /**
+     * Closes the database connection
+     */
+    public void closeConn() throws SQLException {
+        this.connection.close();
+    }
 }

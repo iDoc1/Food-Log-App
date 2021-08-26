@@ -1,4 +1,5 @@
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -38,6 +39,13 @@ public class FoodLogMain {
 
             // Ask if user would like to continue using app
             continueSession = returnToMenu(foodLogComm);
+        }
+
+        // Close food log database connection
+        try {
+            foodLogComm.closeFoodLogConn();
+        } catch (SQLException e) {
+            System.out.println("Error occurred while closing database connection.");
         }
 
         System.out.println("\nThanks for using! Good bye.");

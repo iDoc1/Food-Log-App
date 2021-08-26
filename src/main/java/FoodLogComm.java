@@ -322,4 +322,11 @@ public class FoodLogComm {
         }
     }
 
+    /**
+     * Closes the database connection
+     */
+    public void closeFoodLogConn() throws SQLException {
+        this.connection.close();
+    }
+
 }
