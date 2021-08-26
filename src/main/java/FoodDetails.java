@@ -1,6 +1,8 @@
 /**
  * This class represents an individual food with a food name, meal type,
- * and serving quantity.
+ * and serving quantity. The purpose of this class is to group details
+ * about a specific food log entry together for insertion into the
+ * database.
  *
  * @author iDoc1
  */
@@ -12,7 +14,7 @@ public class FoodDetails {
     private double servingQuantity;
 
     /**
-     * Constructs a FoodDetails object with food name, meal type and serving quantity
+     * Constructs a FoodDetails object with food name, meal type, and serving quantity
      * @param foodName          Name of the food
      * @param mealType          Meal type can be breakfast, lunch, dinner, brunch, or snack
      * @param servingQuantity   Decimal value for number of servings of this food eaten

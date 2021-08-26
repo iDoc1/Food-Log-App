@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -331,7 +330,7 @@ public class FoodLogMain {
         ReportBuilder report = new ReportBuilder(resultSet);
         report.printResults();
 
-        HashMap<Integer, FoodEntry> resultMap = report.getResultsMap();  // Store results in a Map
+        HashMap<Integer, FoodTableEntry> resultMap = report.getResultsMap();  // Store results in a Map
 
         // Ask user to input entry ID of record to edit
         System.out.println();

@@ -1,9 +1,10 @@
 import java.util.HashMap;
 
 /**
- * This class represents a report that contains information about yesterday's
- * meals. This class is used mainly by the ReportBuilder class to store and
- * return information regarding yesterday's meals.
+ * This class represents a report that contains information about meals that
+ * occurred over a certain time span, as determined by the calling class. This
+ * class is used mainly by the ReportBuilder class to store and return
+ * information regarding past meals.
  *
  * @author iDoc1
  *

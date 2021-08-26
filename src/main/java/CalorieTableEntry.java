@@ -1,22 +1,22 @@
 /**
  * This class represents a row in the food log calorie table that contains
  * data regarding the calories per serving and food category of a specific
- * food. This class is used to store data this is pulled from a specific
+ * food. This class is used to store data this is queried from a specific
  * row in the food log calorie table.
  *
  * @author iDoc1
  *
  */
-public class FoodDetailsEntry {
+public class CalorieTableEntry {
     private int caloriesPerServing;
     private String foodCategory;
 
     /**
-     * Constructs a FoodDetailsEntry object given calories and category
+     * Constructs a CalorieTableEntry object given calories and category
      * @param caloriesPerServing    kCal per serving of food
      * @param foodCategory          Category of food (fruit, vegetable, grain, dairy, protein, other)
      */
-    public FoodDetailsEntry(int caloriesPerServing, String foodCategory) {
+    public CalorieTableEntry(int caloriesPerServing, String foodCategory) {
         this.caloriesPerServing = caloriesPerServing;
         this.foodCategory = foodCategory;
     }

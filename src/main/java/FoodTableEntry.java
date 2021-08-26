@@ -2,9 +2,12 @@
  * This class represents a row in the food log database, excluding the
  * entry ID. The purpose of this class is to store the data within individual
  * rows that are fetched from the food log database.
+ *
+ * @author iDoc1
+ *
  */
 
-public class FoodEntry {
+public class FoodTableEntry {
 
     private String entryDate;
     private String foodName;
@@ -13,14 +16,14 @@ public class FoodEntry {
     private String entryNotes;
 
     /**
-     * Constructor for a FoodEntry object
+     * Constructor for a FoodTableEntry object
      * @param entryDate         Date of food log entry
      * @param foodName          Name of food in food log
      * @param mealType          Meal type of food log entry
      * @param servingQuantity   Serving quantity of food log entry
      * @param entryNotes        Notes in food lgo entry
      */
-    public FoodEntry(String entryDate, String foodName, String mealType, double servingQuantity, String entryNotes) {
+    public FoodTableEntry(String entryDate, String foodName, String mealType, double servingQuantity, String entryNotes) {
         this.entryDate = entryDate;
         this.foodName = foodName;
         this.mealType = mealType;

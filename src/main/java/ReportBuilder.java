@@ -28,14 +28,14 @@ public class ReportBuilder {
 
     /**
      * Returns a HashMap where the keys are the entry IDs of each entry in this
-     * object's ResultSet field, and the values are FoodEntry objects containing
+     * object's ResultSet field, and the values are FoodTableEntry objects containing
      * the data stored in each column corresponding to the entry ID.
-     * @return  A HashMap<K,V> where K is the entry ID, and V is a FoodEntry object
+     * @return  A HashMap<K,V> where K is the entry ID, and V is a FoodTableEntry object
      */
-    public HashMap<Integer, FoodEntry> getResultsMap() {
-        HashMap<Integer, FoodEntry> resultMap = new HashMap<>();
+    public HashMap<Integer, FoodTableEntry> getResultsMap() {
+        HashMap<Integer, FoodTableEntry> resultMap = new HashMap<>();
 
-        // Populate HashMap with Integer-FoodEntry pairs
+        // Populate HashMap with Integer-FoodTableEntry pairs
         try {
 
             // Ensure cursor is at front of ResultSet
@@ -50,8 +50,8 @@ public class ReportBuilder {
                 double servingQty = results.getDouble("serving_quantity");
                 String entryNotes = results.getString("entry_notes");
 
-                // Create FoodEntry object
-                FoodEntry foodEntry = new FoodEntry(entryDate, foodName, mealType, servingQty, entryNotes);
+                // Create FoodTableEntry object
+                FoodTableEntry foodEntry = new FoodTableEntry(entryDate, foodName, mealType, servingQty, entryNotes);
 
                 // Store row in HashMap
                 resultMap.put(entryID, foodEntry);
@@ -156,7 +156,7 @@ public class ReportBuilder {
         DataReport dataReport = new DataReport();
 
         // Pull all given food calories details from ResultSet into a Map
-        HashMap<String, FoodDetailsEntry> calorieMap = this.getCalorieMap(foodDetailsData);
+        HashMap<String, CalorieTableEntry> calorieMap = this.getCalorieMap(foodDetailsData);
 
         try {
             results.beforeFirst();
@@ -213,8 +213,8 @@ public class ReportBuilder {
      * @param foodDetailsData   A ResultSet object containing all food log calorie data
      * @return                  A HashMap with all calorie data in given ResultSet
      */
-    public HashMap<String, FoodDetailsEntry> getCalorieMap(ResultSet foodDetailsData) {
-        HashMap<String, FoodDetailsEntry> calorieMap = new HashMap<>();
+    public HashMap<String, CalorieTableEntry> getCalorieMap(ResultSet foodDetailsData) {
+        HashMap<String, CalorieTableEntry> calorieMap = new HashMap<>();
 
         try {
 
@@ -224,8 +224,8 @@ public class ReportBuilder {
                 int caloriesPerServing = foodDetailsData.getInt("calories_per_serving");
                 String foodCategory = foodDetailsData.getString("food_category");
 
-                // Create FoodDetailsEntry object and add to HashMap
-                FoodDetailsEntry calorieDetails = new FoodDetailsEntry(caloriesPerServing, foodCategory);
+                // Create CalorieTableEntry object and add to HashMap
+                CalorieTableEntry calorieDetails = new CalorieTableEntry(caloriesPerServing, foodCategory);
                 calorieMap.put(foodName, calorieDetails);
             }
 
