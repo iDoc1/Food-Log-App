@@ -1,59 +1,48 @@
-**FOOD LOG APP**
+# Food Log App
 
-**INTRODUCTION**  
-This app allows a user to record each food they eat during the day.
-The user can also enter caloric information about the foods that they
-eat, which allows the user to run a data report to view data regarding
-the food they have eaten over the past day or month. This app 
-implements all CRUD functions allowing the user to insert, view, 
-update, and delete food log entries through a command line 
-interface.
+### Introduction
+This app allows a user to record details about foods they ate on specific dates
+and run a data report to view historical data about eating habits. The main
+functionality is described below:
+- User can add meals they ate on specific dates
+- User view meal history on specific dates or within a range of dates
+- User can view all entries containing a specific food
+- The user can edit or delete any food log entry
+- Caloric and food type details can be added for a specific food
+- A historical data report can be viewed for meals eaten yesterday or over the past week
 
-I built this application to learn the fundamentals of using the JDBC
-API and MySQL, strengthen my Java coding skills, and to further 
-enhance my experience with Object-Oriented Programming.
 
-**PREREQUISITES**  
-Before running this program, you must have Java, Maven, and MySQL installed.
+I built this app as a personal project to learn the fundamentals of using 
+the JDBC API and MySQL, strengthen my Java coding skills, and to further 
+my experience with Object-Oriented Programming.
+
+### Before Installing
+Before using this program, you must have Java, Maven, and MySQL installed.
 I built this program using Java 11, but Java 7+ should be sufficient.
-Port 3306 must also be free since this is the default local port used
-by MySQL.
 
-**HOW TO RUN APP**  
-- First, run the following scripts in MySQL on a local connection on 
-  port 3306:
-
-CREATE SCHEMA food_log_database;
-
-CREATE TABLE food_log_database.food_log (  
-entry_id INT NOT NULL AUTO_INCREMENT,  
-entry_date DATE,  
-food_name VARCHAR(30),  
-meal_type VARCHAR(10),  
-serving_quantity FLOAT,  
-entry_notes VARCHAR(255),  
-PRIMARY KEY(entry_id)  
-) ;
-
-CREATE TABLE food_log_database.calorie_table (  
-food_name VARCHAR(30) NOT NULL,  
-calories_per_serving INT,  
-food_category VARCHAR(16),  
-PRIMARY KEY (food_name)  
-);
-
-CREATE USER 'foodLog'@'localhost' IDENTIFIED BY 'admin';  
-GRANT ALL PRIVILEGES ON food_log_database.* TO 'foodLog'@'localhost';
-
-- The above scripts will create the food log database and tables needed
-for the app to function. A user named 'foodLog' with the password 
-  'admin' is also created for the app to use. This can be changed if 
-  needed but will require changing the above script, and the 
-  connection string in the FoodLogConnection.java file.
-- Clone this GitHub repo to a location on your local machine.
-- Navigate to the local repo and install all dependencies using Maven. 
-This can be accomplished using the 'mvn package' command in the terminal.
-- Finally, compile and run the FoodLogMain.java file. This file is the
+### How to Install 
+1. Navigate to the "sql" directory and run the "database_definition.sql" script
+to build the backend database.
+2. Clone this GitHub repo to a location on your local machine.
+3. Navigate to the local repo and install all dependencies using Maven. 
+This can be accomplished using the following command:
+   ~~~
+   mvn package
+   ~~~
+   
+4. Finally, compile and run the FoodLogMain.java file. This file is the
 entry point for the user and will allow you to begin using the app.
   
-Thanks for checking out my project!
+### Using the App
+The below screenshots show a basic overview of the app's functionality.  
+  
+Main Menu  
+![Main Menu](/screenshots/welcome_screen.png)  
+Add an entry to the food log  
+![Add an entry](/screenshots/add_entry.png)  
+View yesterday's meals  
+![View yesterday meals](/screenshots/view_yesterday_meals.png)  
+Add details about a specific food  
+![Add food details](/screenshots/add_food_details.png)  
+View data report for yesterday  
+![View data report](/screenshots/data_report.png)  
